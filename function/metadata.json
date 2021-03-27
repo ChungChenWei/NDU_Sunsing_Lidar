@@ -1,0 +1,91 @@
+{
+
+
+
+
+	"__comment_lidar": "this is metadata of 4 lidars",
+	"lidar": {
+			"NDU"  : {
+					"extension" : ".csv",
+					"freq"		: "1s",
+					"height"	: [100,200,300,400,500,600,700,800,900,1000],
+					"col_func"	: "lambda _h, _col: f'H{int(_h/100)}_{_col}'",
+					"col_nam"	: ["u","v","w","ws","wd"],
+					"out_nam"	: ["u","v","w","ws","wd"],
+					"oth_col"	: {"Temp.":"temp","Humin.":"RH","Pressure.":"pressure","Az":"az"}
+				},
+
+			"SSC"  : {
+					"extension" : ".csv",
+					"freq"		: "1s",
+					"height"	: [100,200,300,400,500,600,700,800,900,1000],
+					"col_func"	: "lambda _h, _col: f'H{int(_h/100)}_{_col}'",
+					"col_nam"	: ["u","v","w","ws","wd"],
+					"out_nam"	: ["u","v","w","ws","wd"],
+					"oth_col"	: {"Temp.":"temp","Humin.":"RH","Pressure.":"pressure","Az":"az"}
+				},
+
+			"RCEC" : {
+					"extension" : ".csv",
+					"freq"		: "1s",
+					"height"	: [100,200,300,400,500,600,700,800,900,1000],
+					"col_func"	: "lambda _h, _col: f'H{int(_h/100)}_{_col}'",
+					"col_nam"	: ["u","v","w","ws","wd"],
+					"out_nam"	: ["u","v","w","ws","wd"],
+					"oth_col"	: {"Temp.":"temp","Humin.":"RH","Pressure.":"pressure","Az":"az"}
+				},
+
+			"TORI" : {
+					"extension" : ".csv",
+					"freq"		: "1s",
+					"height"	: [100,200,300,400,500,600,700,800,900,1000],
+					"col_func"	: "lambda _h, _col: f'H{int(_h/100)}_{_col}'",
+					"col_nam"	: ["u","v","w","ws","wd"],
+					"out_nam"	: ["u","v","w","ws","wd"],
+					"oth_col"	: {"Temp.":"temp","Humin.":"RH","Pressure.":"pressure","Az":"az"}
+				},
+
+
+
+			"SSC":{},
+			"RCEC":{},
+			"TORI":{}
+
+
+	}
+}
+
+
+
+
+
+
+rcec
+			with open(pth(self.path_RCEC,file),'r',encoding='utf-8',errors='ignore') as f:
+				fList.append(pd.read_csv(f,skiprows=1,parse_dates=['Date_time'],na_values=[99.9,999],
+							 date_parser=lambda _: dtm.strptime(_,'%Y%m%d %X')).set_index('Date_time').resample('5T').mean())
+
+
+
+
+
+tori
+
+			with open(pth(self.path_TORI,file),'r',encoding='utf-8',errors='ignore') as f:
+
+				fList.append(pd.read_table(f,skiprows=41,
+							 parse_dates=['Timestamp (end of interval)']).set_index('Timestamp (end of interval)').resample('1T').mean())
+
+
+
+ssc
+		fList = []
+		for file in listdir(self.path_SSC):
+			if '.xlsx' not in file: continue
+			print(f"\r\t\treading {file}",end='')
+
+			with open(pth(self.path_SSC,file),'rb') as f:
+				fList.append(pd.read_excel(f,parse_dates=['Timestamp (end of interval)']).set_index('Timestamp (end of interval)').resample('1T').mean())
+		print()
+
+

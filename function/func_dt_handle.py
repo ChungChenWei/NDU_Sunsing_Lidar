@@ -51,7 +51,7 @@ class lidar_reader:
 		print('='*65)
 		print(f"{dtm.now().strftime('%m/%d %X')}")
 
-	def _raw_reader(self,_flist,_file):
+	def __raw_reader(self,_flist,_file):
 		## customize each instrument
 		## read one file
 		print('not cool')
@@ -83,7 +83,7 @@ class lidar_reader:
 			if ext_nam not in file: continue
 			print(f"\r\t\treading {file}",end='')
 
-			f_list = self._raw_reader(f_list,file)
+			f_list = self.__raw_reader(f_list,file)
 
 
 			# breakpoint()
@@ -113,13 +113,52 @@ class lidar_reader:
 	def get_data(self):
 		return self.__reader()
 
-
+## lidar NDU
+## National Defense University
+## extension : csv file
+## height 	 : 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000
+## frequence : 1s
+## variable  : u, v, w, ws, wd ; 
+##			   temp, RH, pressure, Az
 class lidar_NDU(lidar_reader):
 	def __init__(self,_path,_sta,_fin,reset=False):
 		super().__init__(_path,_sta,_fin,_nam='NDU',_reset=reset)
 
 
-	def _raw_reader(self,_flist,_file):
+	def _lidar_reader__raw_reader(self,_flist,_file):
+		with open(pth(self.path,_file),'r',encoding='utf-8',errors='ignore') as f:
+			_flist.append(pd.read_csv(f,skiprows=1,parse_dates=['Time'],na_values=[99.9,999.9],
+									  date_parser=lambda _: dtm.strptime(_,'%Y%m%d_%X.%f')).set_index('Time').resample('1s').mean())		
+		return _flist
+
+class lidar_RCEC(lidar_reader):
+	def __init__(self,_path,_sta,_fin,reset=False):
+		super().__init__(_path,_sta,_fin,_nam='RCEC',_reset=reset)
+
+
+	def _lidar_reader__raw_reader(self,_flist,_file):
+		with open(pth(self.path,_file),'r',encoding='utf-8',errors='ignore') as f:
+			_flist.append(pd.read_csv(f,skiprows=1,parse_dates=['Date_time'],na_values=[99.9,999],
+									  date_parser=lambda _: dtm.strptime(_,'%Y%m%d %X')).set_index('Date_time').resample('5T').mean())		
+		return _flist
+
+class lidar_SSC(lidar_reader):
+	def __init__(self,_path,_sta,_fin,reset=False):
+		super().__init__(_path,_sta,_fin,_nam='SSC',_reset=reset)
+
+
+	def _lidar_reader__raw_reader(self,_flist,_file):
+		with open(pth(self.path,_file),'r',encoding='utf-8',errors='ignore') as f:
+			_flist.append(pd.read_csv(f,skiprows=1,parse_dates=['Time'],na_values=[99.9,999.9],
+									  date_parser=lambda _: dtm.strptime(_,'%Y%m%d_%X.%f')).set_index('Time').resample('1s').mean())		
+		return _flist
+
+class lidar_TORI(lidar_reader):
+	def __init__(self,_path,_sta,_fin,reset=False):
+		super().__init__(_path,_sta,_fin,_nam='TORI',_reset=reset)
+
+
+	def _lidar_reader__raw_reader(self,_flist,_file):
 		with open(pth(self.path,_file),'r',encoding='utf-8',errors='ignore') as f:
 			_flist.append(pd.read_csv(f,skiprows=1,parse_dates=['Time'],na_values=[99.9,999.9],
 									  date_parser=lambda _: dtm.strptime(_,'%Y%m%d_%X.%f')).set_index('Time').resample('1s').mean())		
@@ -128,13 +167,13 @@ class lidar_NDU(lidar_reader):
 
 
 
-start_dtm = dtm(2020,11,20,0,0,0)
-final_dtm = dtm(2020,11,21,0,0,0)
-path = pth('..','data','Lidar_Sunsing_NDU_testdata')
+# start_dtm = dtm(2020,11,20,0,0,0)
+# final_dtm = dtm(2020,11,21,0,0,0)
+# path = pth('..','data','Lidar_Sunsing_NDU_testdata')
 
-reader = lidar_NDU(path,start_dtm,final_dtm,reset=True)
+# reader = lidar_NDU(path,start_dtm,final_dtm,reset=True)
 
-dt = reader.get_data()
+# dt = reader.get_data()
 
 
 

@@ -30,43 +30,40 @@ with open('metadata.json','r') as f:
 ## list the file in the path and 
 ## read pickle file if it exisits, else read raw data and dump the pickle file
 class lidar_reader:
+
 	## initial setting
 	## input path and start time, final time
 	## because the pickle file will be generated after read raw data first time, if want to reread the rawdata, please set 'reser=True'
-	def __init__(self,_path,_sta,_fin,_nam=None,reset=False):
-		print('\n'+'='*50)
+	def __init__(self,_path,_sta,_fin,_nam,_reset=False):
+		print(f'\n{_nam} lidar')
+		print('='*65)
 		print(f"Reading file and process data")
 
 		## class parameter
 		self.index = lambda _freq: pd.date_range(_sta,_fin,freq=_freq)
 		self.path  = _path
-		self.reset = reset
+		self.reset = _reset
 		self.meta  = meta_dt['lidar'][_nam]
 		self.nam   = _nam
-		self.pkl_nam = f'{nam.lower()}.pkl'
+		self.pkl_nam = f'{_nam.lower()}.pkl'
 		
 		print(f" from {_sta.strftime('%Y-%m-%d %X')} to {_fin.strftime('%Y-%m-%d %X')}")
-		print('='*50)
+		print('='*65)
 		print(f"{dtm.now().strftime('%m/%d %X')}")
 
-	def __raw_reader(self,_flist,_file):
+	def _raw_reader(self,_flist,_file):
 		## customize each instrument
 		## read one file
+		print('not cool')
 		return None
 
-	def __prcs_data(self,_df):
-		## customize each instrument
-		## process all file
-		return None
-
-
+	# def __prcs_data(self,_df):
+		# customize each instrument
+		# process all file
+		# return None
 
 	## read raw data
 	def __reader(self):
-		## metadata parameter
-		
-		ext_nam	= self.mete['extension']
-		dt_freq = self.mete['freq']
 
 		## read pickle if pickle file exisits and 'reset=False' or process raw data
 		if (self.pkl_nam in listdir(self.path))&(~self.reset):
@@ -77,37 +74,89 @@ class lidar_reader:
 		else: 
 			print(f"\n\t{dtm.now().strftime('%m/%d %X')} : Reading file of {self.nam} lidar and process raw data")
 
+		## metadata parameter
+		ext_nam, dt_freq, height, col_fun, col_nam, out_nam, oth_col = self.meta.values()
+
 		## read raw data
 		f_list = []
 		for file in listdir(self.path):
 			if ext_nam not in file: continue
 			print(f"\r\t\treading {file}",end='')
 
-			f_list = self.__raw_reader(f_list,file)
+			f_list = self._raw_reader(f_list,file)
+
+
+			# breakpoint()
 		print()
 
 		df = pd.concat(f_list).reindex(self.index(dt_freq))
-
-
-
-
-
-		## process different height
+		
+		## classify data
+		## use dictionary to store data
 		fout = {}
-		for nam in ['u','v','w','ws','wd']:
-			fout[nam] = _df[[ '_'.join([_h,nam]) for _h in [ f'H{_:d}' for _ in range(1,11) ] ]]
-			fout[nam].columns = range(100,1100,100)
+		for col, nam in zip(col_nam,out_nam):
+			fout[nam] = df[[ eval(col_fun)(h,col) for h in height ]]
+			fout[nam].columns = n.array(height).astype(int)
 
 		## process other parameter
-		_df.rename(columns={'Temp.':'temp','Humin.':'RH','Pressure.':'pressure','Az':'az'},inplace=True)
-		fout['other'] = _df[['temp','RH','pressure','az']]
+		if oth_col is not None:
+			df.rename(columns=oth_col,inplace=True)
+			fout['other'] = df[list(oth_col.values())]
 
 
 		with open(pth(self.path,self.pkl_nam),'wb') as f:
 			pkl.dump(fout,f,protocol=pkl.HIGHEST_PROTOCOL)
 
-
 		return fout
+
+
+	def get_data(self):
+		return self.__reader()
+
+
+class lidar_NDU(lidar_reader):
+	def __init__(self,_path,_sta,_fin,reset=False):
+		super().__init__(_path,_sta,_fin,_nam='NDU',_reset=reset)
+
+
+	def _raw_reader(self,_flist,_file):
+		with open(pth(self.path,_file),'r',encoding='utf-8',errors='ignore') as f:
+			_flist.append(pd.read_csv(f,skiprows=1,parse_dates=['Time'],na_values=[99.9,999.9],
+									  date_parser=lambda _: dtm.strptime(_,'%Y%m%d_%X.%f')).set_index('Time').resample('1s').mean())		
+		return _flist
+
+
+
+
+start_dtm = dtm(2020,11,20,0,0,0)
+final_dtm = dtm(2020,11,21,0,0,0)
+path = pth('..','data','Lidar_Sunsing_NDU_testdata')
+
+reader = lidar_NDU(path,start_dtm,final_dtm,reset=True)
+
+dt = reader.get_data()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -118,15 +167,33 @@ class lidar_reader:
 
 ndu
 		## process different height
+
+		# height   = [100,200,300,400,500,600,700,800,900,1000]
+		# col_func = "lambda _h, _col: f'H{int(_h/100)}_{_col}'"
+		# col_nam  = ['u','v','w','ws','wd']
+		# out_nam  = ['u','v','w','ws','wd']
+
+
+
+
+
+
 		fout = {}
-		for nam in ['u','v','w','ws','wd']:
-			fout[nam] = _df[[ '_'.join([_h,nam]) for _h in [ f'H{_:d}' for _ in range(1,11) ] ]]
-			fout[nam].columns = range(100,1100,100)
+		for col, nam in zip(col_nam,out_nam):
+			fout[nam] = _df[[ eval(col_func)(h,col) for h in height ]]
+			fout[nam].columns = n.array(height).astype(int)
+
+
 
 		## process other parameter
-		_df.rename(columns={'Temp.':'temp','Humin.':'RH','Pressure.':'pressure','Az':'az'},inplace=True)
-		fout['other'] = _df[['temp','RH','pressure','az']]
+		if oth_col is not None:
+			df.rename(columns=oth_col,inplace=True)
+			fout['other'] = df[[list(oth_col.values())]]
 
+
+
+
+{'Temp.':'temp','Humin.':'RH','Pressure.':'pressure','Az':'az'}
 
 		height = []
 		for col in _df.keys():
@@ -495,7 +562,7 @@ setting = {'path_NDU'  : pth('..','data','Lidar_Sunsing_NDU_testdata'),
 		   'reset'	   : False
 			}
 
-reader = reader(set_dic=setting)
+# reader = reader(set_dic=setting)
 
 '''
 
@@ -522,7 +589,7 @@ dt = reader.radiosonde_NTU(start_dtm,final_dtm)
 
 
 
-start_dtm = dtm(2021,3,16,0,0,0)
-final_dtm = dtm(2021,3,16,0,0,0)
-dt = reader.radiosonde_RCEC(start_dtm,final_dtm)
+# start_dtm = dtm(2021,3,16,0,0,0)
+# final_dtm = dtm(2021,3,16,0,0,0)
+# dt = reader.radiosonde_RCEC(start_dtm,final_dtm)
 

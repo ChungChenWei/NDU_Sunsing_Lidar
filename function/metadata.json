@@ -1,0 +1,53 @@
+{
+	"__comment_lidar": "this is metadata of 4 lidars"
+	"lidar": {
+			"NDU": {
+					'extension': '.csv'
+					'freq': '1s'
+
+
+				}
+
+
+
+			"SSC":
+			"RCEC":
+			"TORI":
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	}
+}
+

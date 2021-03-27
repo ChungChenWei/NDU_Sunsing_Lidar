@@ -10,6 +10,7 @@ from os.path import join as pth, exists
 import pickle as pkl
 import numpy as n
 import pandas as pd
+import json as jsn
 
 ## bugs box
 """
@@ -20,13 +21,170 @@ import pandas as pd
 # """
 
 
+# parameter
+with open('metadata.json','r') as f:
+	meta_dt = jsn.load(f)
 
 # class
 ## parant class (read file)
 ## list the file in the path and 
 ## read pickle file if it exisits, else read raw data and dump the pickle file
-## 
-class reader:
+class lidar_reader:
+	## initial setting
+	## input path and start time, final time
+	## because the pickle file will be generated after read raw data first time, if want to reread the rawdata, please set 'reser=True'
+	def __init__(self,_path,_sta,_fin,_nam=None,reset=False):
+		print('\n'+'='*50)
+		print(f"Reading file and process data")
+
+		## class parameter
+		self.index = lambda _freq: pd.date_range(_sta,_fin,freq=_freq)
+		self.path  = _path
+		self.reset = reset
+		self.meta  = meta_dt['lidar'][_nam]
+		self.nam   = _nam
+		self.pkl_nam = f'{nam.lower()}.pkl'
+		
+		print(f" from {_sta.strftime('%Y-%m-%d %X')} to {_fin.strftime('%Y-%m-%d %X')}")
+		print('='*50)
+		print(f"{dtm.now().strftime('%m/%d %X')}")
+
+	def __raw_reader(self,_flist,_file):
+		## customize each instrument
+		## read one file
+		return None
+
+	def __prcs_data(self,_df):
+		## customize each instrument
+		## process all file
+		return None
+
+
+
+	## read raw data
+	def __reader(self):
+		## metadata parameter
+		
+		ext_nam	= self.mete['extension']
+		dt_freq = self.mete['freq']
+
+		## read pickle if pickle file exisits and 'reset=False' or process raw data
+		if (self.pkl_nam in listdir(self.path))&(~self.reset):
+			print(f"\n\t{dtm.now().strftime('%m/%d %X')} : Reading pickle of {self.nam} lidar")
+			with open(pth(self.path,self.pkl_nam),'rb') as f:
+				fout = pkl.load(f)
+			return fout
+		else: 
+			print(f"\n\t{dtm.now().strftime('%m/%d %X')} : Reading file of {self.nam} lidar and process raw data")
+
+		## read raw data
+		f_list = []
+		for file in listdir(self.path):
+			if ext_nam not in file: continue
+			print(f"\r\t\treading {file}",end='')
+
+			f_list = self.__raw_reader(f_list,file)
+		print()
+
+		df = pd.concat(f_list).reindex(self.index(dt_freq))
+
+
+
+
+
+		## process different height
+		fout = {}
+		for nam in ['u','v','w','ws','wd']:
+			fout[nam] = _df[[ '_'.join([_h,nam]) for _h in [ f'H{_:d}' for _ in range(1,11) ] ]]
+			fout[nam].columns = range(100,1100,100)
+
+		## process other parameter
+		_df.rename(columns={'Temp.':'temp','Humin.':'RH','Pressure.':'pressure','Az':'az'},inplace=True)
+		fout['other'] = _df[['temp','RH','pressure','az']]
+
+
+		with open(pth(self.path,self.pkl_nam),'wb') as f:
+			pkl.dump(fout,f,protocol=pkl.HIGHEST_PROTOCOL)
+
+
+		return fout
+
+
+
+
+
+
+'''
+
+ndu
+		## process different height
+		fout = {}
+		for nam in ['u','v','w','ws','wd']:
+			fout[nam] = _df[[ '_'.join([_h,nam]) for _h in [ f'H{_:d}' for _ in range(1,11) ] ]]
+			fout[nam].columns = range(100,1100,100)
+
+		## process other parameter
+		_df.rename(columns={'Temp.':'temp','Humin.':'RH','Pressure.':'pressure','Az':'az'},inplace=True)
+		fout['other'] = _df[['temp','RH','pressure','az']]
+
+
+		height = []
+		for col in _df.keys():
+			if col in ['Temperature', 'Humidity', 'Pressure']: continue
+			height.append(col.split('m ')[0]) if col.split('m ')[0] not in height else None
+
+
+
+rcec
+
+		fout = {}
+		col_nam = ['WindSpeed','WindDirection','MeanSNR(dB)','DataObtainRate','StdDev','Max WindSpeed','Min WindSpeed','ZWind','ZWind StdDev']
+		out_nam = ['ws','wd','SNR','dtObtRate','std','ws_max','ws_max','z_ws','z_ws_std']
+		for col, nam in zip(col_nam,out_nam):
+			fout[nam] = _df[[ f'{_h}m {col}' for _h in height ]]
+			fout[nam].columns = n.array(height).astype(int)
+
+		## process other parameter
+		_df.rename(columns={'Temperature':'temp','Humidity':'RH','Pressure':'pressure'},inplace=True)
+		fout['other'] = _df[['temp','RH','pressure']]
+
+
+
+tori
+		## process different height
+		## CNR : carrier to noise ratio
+		height = [40,45,55,65,75,85,95,115,135,155,175,195]
+		col_nam = ['Wind Speed (m/s)','Wind Speed Dispersion (m/s)','Wind Direction ()','Z-wind Dispersion (m/s)','Z-wind (m/s)',
+				   'Wind Speed min (m/s)','Wind Speed max (m/s)','CNR (dB)','CNR min (dB)','Dopp Spect Broad (m/s)','Data Availability (%)']
+		out_nam = ['ws','ws_disp','wd','ws_max','z_ws','z_ws_disp','z_ws_std','cnr','cnr_min','Dopp Spect Broad','dt_ava']
+
+		fout = {}
+		for col, nam in zip(col_nam,out_nam):
+			fout[nam] = _df[[ f'{_h}m {col}' for _h in height ]]
+			fout[nam].columns = height
+		
+		## process other parameter
+		_df.rename(columns={'Int Temp (C)':'temp','Ext Temp (C)':'ext temp','Wiper count':'wiper count',
+							'Rel Humidity (%)':'RH','Pressure (hPa)':'pressure','Vbatt (V)':'Vbatt'},inplace=True)
+		fout['other'] = _df[['temp','ext temp','pressure','RH','wiper count','Vbatt']]
+
+		with open(pth(self.path_TORI,'tori.pkl'),'wb') as f:
+			pkl.dump(fout,f,protocol=pkl.HIGHEST_PROTOCOL)
+
+
+ssc
+
+		## process different height
+		## CNR : carrier to noise ratio
+		height = [40,45,50,55,60,65,70,75,80,100,120,140]
+		col_nam = ['Wind Speed (m/s)','Wind Speed Dispersion (m/s)','Wind Direction (?','Z-wind Dispersion (m/s)','Z-wind (m/s)',
+				   'Wind Speed min (m/s)','Wind Speed max (m/s)','CNR (dB)','CNR min (dB)','Dopp Spect Broad (m/s)','Data Availability (%)']
+		out_nam = ['ws','ws_disp','wd','ws_max','z_ws','z_ws_disp','z_ws_std','cnr','cnr_min','Dopp Spect Broad','dt_ava']
+
+		fout = {}
+		for col, nam in zip(col_nam,out_nam):
+			fout[nam] = _df[[ f'{_h}m {col}' for _h in height ]]
+			fout[nam].columns = height
 
 
 
@@ -36,27 +194,7 @@ class reader:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+'''
 
 
 

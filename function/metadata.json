@@ -12,80 +12,66 @@
 					"col_func"	: "lambda _h, _col: f'H{int(_h/100)}_{_col}'",
 					"col_nam"	: ["u","v","w","ws","wd"],
 					"out_nam"	: ["u","v","w","ws","wd"],
-					"oth_col"	: {"Temp.":"temp","Humin.":"RH","Pressure.":"pressure","Az":"az"}
+					"oth_col"	: {"Temp."	   : "temp",
+								   "Humin."	   : "RH",
+								   "Pressure." : "pressure",
+								   "Az"		   : "az"}
 				},
 
 			"SSC"  : {
-					"extension" : ".csv",
-					"freq"		: "1s",
-					"height"	: [100,200,300,400,500,600,700,800,900,1000],
-					"col_func"	: "lambda _h, _col: f'H{int(_h/100)}_{_col}'",
-					"col_nam"	: ["u","v","w","ws","wd"],
-					"out_nam"	: ["u","v","w","ws","wd"],
-					"oth_col"	: {"Temp.":"temp","Humin.":"RH","Pressure.":"pressure","Az":"az"}
+					"extension" : ".xlsx",
+					"freq"		: "1T",
+					"height"	: [40,45,50,55,60,65,70,75,80,100,120,140],
+					"col_func"	: "lambda _h, _col: f'{_h}m {_col}'",
+					"col_nam"	: ["Wind Speed (m/s)","Wind Speed Dispersion (m/s)","Wind Direction (?","Z-wind Dispersion (m/s)",
+								   "Z-wind (m/s)","Wind Speed min (m/s)","Wind Speed max (m/s)","CNR (dB)","CNR min (dB)",
+								   "Dopp Spect Broad (m/s)","Data Availability (%)"],
+					"out_nam"	: ["ws","ws_disp","wd","ws_max","z_ws","z_ws_disp","z_ws_std","cnr","cnr_min","Dopp Spect Broad","dt_ava"],
+					"oth_col"	: null
 				},
 
 			"RCEC" : {
 					"extension" : ".csv",
-					"freq"		: "1s",
-					"height"	: [100,200,300,400,500,600,700,800,900,1000],
-					"col_func"	: "lambda _h, _col: f'H{int(_h/100)}_{_col}'",
-					"col_nam"	: ["u","v","w","ws","wd"],
-					"out_nam"	: ["u","v","w","ws","wd"],
-					"oth_col"	: {"Temp.":"temp","Humin.":"RH","Pressure.":"pressure","Az":"az"}
+					"freq"		: "5T",
+					"height"	: [  51,  77, 103, 129, 155, 181, 207, 233, 259, 285, 311, 337, 363, 389, 415, 441, 
+								    467, 493, 519, 545, 571, 597, 623, 649, 675, 701, 727, 753, 779, 805, 831, 857, 
+								    883, 909, 935, 961, 987,1013,1039,1065,1091,1117,1143,1169,1195,1221,1247,1273,
+								   1480,1506,1532,1558,1584,1610,1636,1662,1688,1714,1740,1766,1792,1818,1844,1870,
+								   1299,1325,1350,1376,1402,1428,1454,1896,1922,1948,1974,2000,2026,2052,2078,2104,
+								   2130,2156,2182,2208,2234,2260,2286,2312,2338,2364,2390,2416,2442,2468,2494,2520,
+								   2546,2572,2598,2624,2650,2676,2701,2727,2753,2779,2805,2831,2857,2883,2909,2935,
+								   2961,2987,3013,3039,3065,3091,3117,3143,3169,3195,3221,3247,3273,3299,3325,3351,
+								   3377,3403,3429,3455,3481,3507,3533,3559,3585,3611,3637,3663,3689,3715,3741,3767,
+								   3793,3819,3845,3871,3897,3923,3949,3975,4001,4027,4052,4078,4104,4130,4156,4182,
+								   4208,4234,4260,4286,4312,4338,4364,4390,4416,4442,4468,4494,4520,4546,4572,4598,
+								   4624,4650,4676,4702,4728,4754,4780,4806,4832,4858,4884,4910,4936,4962,4988,5014],
+					"col_func"	: "lambda _h, _col: f'{_h}m {_col}'",
+					"col_nam"	: ["WindSpeed","WindDirection","MeanSNR(dB)","DataObtainRate","StdDev","Max WindSpeed",
+								   "Min WindSpeed","ZWind","ZWind StdDev"],
+					"out_nam"	: ["ws","wd","SNR","dtObtRate","std","ws_max","ws_max","z_ws","z_ws_std"],
+					"oth_col"	: {"Temperature" : "temp",
+								   "Humidity"	 : "RH",
+								   "Pressure"	 : "pressure"}
 				},
 
 			"TORI" : {
-					"extension" : ".csv",
-					"freq"		: "1s",
-					"height"	: [100,200,300,400,500,600,700,800,900,1000],
-					"col_func"	: "lambda _h, _col: f'H{int(_h/100)}_{_col}'",
-					"col_nam"	: ["u","v","w","ws","wd"],
-					"out_nam"	: ["u","v","w","ws","wd"],
-					"oth_col"	: {"Temp.":"temp","Humin.":"RH","Pressure.":"pressure","Az":"az"}
-				},
-
-
-
-			"SSC":{},
-			"RCEC":{},
-			"TORI":{}
-
-
+					"extension" : ".sta",
+					"freq"		: "1T",
+					"height"	: [40,45,55,65,75,85,95,115,135,155,175,195],
+					"col_func"	: "lambda _h, _col: f'{_h}m {_col}'",
+					"col_nam"	: ["Wind Speed (m/s)","Wind Speed Dispersion (m/s)","Wind Direction ()","Z-wind Dispersion (m/s)",
+								   "Z-wind (m/s)","Wind Speed min (m/s)","Wind Speed max (m/s)","CNR (dB)","CNR min (dB)",
+								   "Dopp Spect Broad (m/s)","Data Availability (%)"],
+					"out_nam"	: ["ws","ws_disp","wd","ws_max","z_ws","z_ws_disp","z_ws_std","cnr","cnr_min","Dopp Spect Broad","dt_ava"],
+					"oth_col"	: {"Int Temp (C)"	  : "temp",
+								   "Ext Temp (C)"	  : "ext temp",
+								   "Wiper count"	  : "wiper count",
+								   "Rel Humidity (%)" : "RH",
+								   "Pressure (hPa)"	  : "pressure",
+								   "Vbatt (V)"		  : "Vbatt"}
+				}
 	}
 }
 
-
-
-
-
-
-rcec
-			with open(pth(self.path_RCEC,file),'r',encoding='utf-8',errors='ignore') as f:
-				fList.append(pd.read_csv(f,skiprows=1,parse_dates=['Date_time'],na_values=[99.9,999],
-							 date_parser=lambda _: dtm.strptime(_,'%Y%m%d %X')).set_index('Date_time').resample('5T').mean())
-
-
-
-
-
-tori
-
-			with open(pth(self.path_TORI,file),'r',encoding='utf-8',errors='ignore') as f:
-
-				fList.append(pd.read_table(f,skiprows=41,
-							 parse_dates=['Timestamp (end of interval)']).set_index('Timestamp (end of interval)').resample('1T').mean())
-
-
-
-ssc
-		fList = []
-		for file in listdir(self.path_SSC):
-			if '.xlsx' not in file: continue
-			print(f"\r\t\treading {file}",end='')
-
-			with open(pth(self.path_SSC,file),'rb') as f:
-				fList.append(pd.read_excel(f,parse_dates=['Timestamp (end of interval)']).set_index('Timestamp (end of interval)').resample('1T').mean())
-		print()
 
 

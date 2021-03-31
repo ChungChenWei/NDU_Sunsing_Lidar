@@ -1,4 +1,4 @@
-# func of main
+# initial function 
 # version : 
 
 # target : 
@@ -6,10 +6,10 @@
 
 from datetime import datetime as dtm
 from os import listdir, mkdir
-from os.path import join as pth, exists
+from os.path import join as pth, exists, dirname, realpath
 import pickle as pkl
-import numpy as n
-from pandas import read_csv, read_excel, read_table, date_range, concat
+# import numpy as n
+from pandas import date_range, concat
 import json as jsn
 
 ## bugs box
@@ -21,8 +21,17 @@ import json as jsn
 # """
 
 
+__all__ = [
+		'NDU',
+		'SSC',
+		'RCEC',
+		'TORI',
+	]
+
+
 # parameter
-with open('metadata.json','r') as f:
+cur_file_path = dirname(realpath(__file__))
+with open(pth(cur_file_path,'metadata.json'),'r') as f:
 	meta_dt = jsn.load(f)
 
 # class
@@ -33,7 +42,8 @@ class lidar_reader:
 
 	## initial setting
 	## input path and start time, final time
-	## because the pickle file will be generated after read raw data first time, if want to reread the rawdata, please set 'reser=True'
+	## because the pickle file will be generated after read raw data first time, 
+	## if want to reread the rawdata, please set 'reser=True'
 	def __init__(self,_path,_sta,_fin,_nam,_reset=False):
 		print(f'\n{_nam} lidar')
 		print('='*65)
@@ -46,6 +56,7 @@ class lidar_reader:
 		self.meta  = meta_dt['lidar'][_nam]
 		self.nam   = _nam
 		self.pkl_nam = f'{_nam.lower()}.pkl'
+		self.__time  = (_sta,_fin)
 		
 		print(f" from {_sta.strftime('%Y-%m-%d %X')} to {_fin.strftime('%Y-%m-%d %X')}")
 		print('='*65)
@@ -55,6 +66,12 @@ class lidar_reader:
 		## customize each instrument
 		## read one file
 		return None
+
+	def __raw_process(self,_flist,_freq):
+		## customize each instrument
+		# breakpoint()
+		out = concat(_flist).resample(_freq).mean().reindex(self.index(_freq))
+		return out
 
 	## read raw data
 	def __reader(self):
@@ -81,7 +98,7 @@ class lidar_reader:
 			f_list = self.__raw_reader(f_list,file)
 		print()
 
-		df = concat(f_list).reindex(self.index(dt_freq))
+		fout = self.__raw_process(f_list,dt_freq)
 
 		##=================================================================================================================
 		## classify data
@@ -104,104 +121,27 @@ class lidar_reader:
 		return fout
 
 	## get process data
-	def get_data(self):
-		return self.__reader()
+	def get_data(self,start=None,final=None):
 
-# sub class
-## lidar NDU
-## National Defense University
-## extension : .csv
-## height 	 : 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000
-## frequence : 1s
-## variable  : u, v, w, ws, wd ; 
-##			   temp, RH, pressure, Az
-class lidar_NDU(lidar_reader):
-	def __init__(self,_path,_sta,_fin,reset=False):
-		super().__init__(_path,_sta,_fin,_nam='NDU',_reset=reset)
+		# _mean = self.meta['']   ,mean_freq=None
 
-	def _lidar_reader__raw_reader(self,_flist,_file):
-		with open(pth(self.path,_file),'r',encoding='utf-8',errors='ignore') as f:
-			_flist.append(read_csv(f,skiprows=1,parse_dates=['Time'],na_values=[99.9,999.9],
-								   date_parser=lambda _: dtm.strptime(_,'%Y%m%d_%X.%f')).set_index('Time').resample('1s').mean())		
-		return _flist
+		self.__time = (start,final) if start is not None else self.__time
 
-## lidar SSC
-## Smartec Scientific Corp
-## extension : .xlsx
-## height 	 : 40, 45, 50, 55, 60, 65, 70, 75, 80, 100, 120, 140
-## frequence : 1 min
-## variable  : ws, ws_disp, wd, ws_max, z_ws, z_ws_disp, z_ws_std, cnr, cnr_min, Dopp Spect Broad, dt_ava ; 
-##			   None
-class lidar_SSC(lidar_reader):
-	def __init__(self,_path,_sta,_fin,reset=False):
-		super().__init__(_path,_sta,_fin,_nam='SSC',_reset=reset)
+		_out = {}
+		for _nam, _val in self.__reader().items():
+			_out[_nam] = _val.loc[self.__time[0]:self.__time[-1]]
 
-	def _lidar_reader__raw_reader(self,_flist,_file):
-		with open(pth(self.path,_file),'rb') as f:
-			_flist.append(read_excel(f,parse_dates=['Timestamp (end of interval)']
-									 ).set_index('Timestamp (end of interval)').resample('1T').mean())
-		return _flist
-
-## lidar RCEC
-## Research Center of Environmental Changes
-## extension : .csv
-## height 	 : 51, 77, 103, ... ,4988, 5014 (60m ~ 5820m * sin(60) ) 
-## frequence : 5 min
-## variable  : ws, wd, SNR, dtObtRate, std, ws_max, ws_max, z_ws, z_ws_std ; 
-##			   temp, RH, pressure
-class lidar_RCEC(lidar_reader):
-	def __init__(self,_path,_sta,_fin,reset=False):
-		super().__init__(_path,_sta,_fin,_nam='RCEC',_reset=reset)
-
-	def _lidar_reader__raw_reader(self,_flist,_file):
-		with open(pth(self.path,_file),'r',encoding='utf-8',errors='ignore') as f:
-			_flist.append(read_csv(f,skiprows=1,parse_dates=['Date_time'],na_values=[99.9,999],
-								   date_parser=lambda _: dtm.strptime(_,'%Y%m%d %X')).set_index('Date_time').resample('5T').mean())
-		return _flist
+		return _out
 
 
-## lidar TORI
-## Taiwan Ocean Research Institute
-## extension : .sta
-## height 	 : 40, 45, 55, 65, 75, 85, 95, 115, 135, 155, 175, 195
-## frequence : 1 min
-## variable  : ws, ws_disp, wd, ws_max, z_ws, z_ws_disp, z_ws_std, cnr, cnr_min, Dopp Spect Broad, dt_ava ; 
-##			   temp, ext temp, RH, pressure, Vbatt
-class lidar_TORI(lidar_reader):
-	def __init__(self,_path,_sta,_fin,reset=False):
-		super().__init__(_path,_sta,_fin,_nam='TORI',_reset=reset)
 
-	def _lidar_reader__raw_reader(self,_flist,_file):
-		with open(pth(self.path,_file),'r',encoding='utf-8',errors='ignore') as f:
-			_flist.append(read_table(f,skiprows=41,parse_dates=['Timestamp (end of interval)']
-									 ).set_index('Timestamp (end of interval)').resample('1T').mean())
-		return _flist
+
+
+
+
 
 
 # test
-start_dtm = dtm(2020,11,20,0,0,0)
-final_dtm = dtm(2020,11,21,0,0,0)
-path = pth('..','data','Lidar_Sunsing_NDU_testdata')
-reader = lidar_NDU(path,start_dtm,final_dtm,reset=True)
-dt = reader.get_data()
-
-start_dtm = dtm(2015,1,23,12,30,0)
-final_dtm = dtm(2015,1,23,15,30,0)
-path = pth('..','data','Lidar_Sunsing_SSC_testdata')
-reader = lidar_SSC(path,start_dtm,final_dtm,reset=True)
-dt1 = reader.get_data()
-
-start_dtm = dtm(2020,11,27,0,0,0)
-final_dtm = dtm(2020,11,28,0,0,0)
-path = pth('..','data','Lidar_Sunsing_RCEC_testdata')
-reader = lidar_RCEC(path,start_dtm,final_dtm,reset=True)
-dt2 = reader.get_data()
-
-start_dtm = dtm(2014,12,29,1,30,0)
-final_dtm = dtm(2014,12,29,2,0,0)
-path = pth('..','data','Lidar_Sunsing_TORI_testdata')
-reader = lidar_TORI(path,start_dtm,final_dtm,reset=True)
-dt3 = reader.get_data()
 
 
 

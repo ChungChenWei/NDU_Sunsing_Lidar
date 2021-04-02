@@ -100,14 +100,22 @@ class lidar_reader:
 
 		df = self.__raw_process(f_list,dt_freq)
 
+		
+
 		##=================================================================================================================
 		## classify data
 		## use dictionary to store data
 		fout = {}
 		for col, nam in zip(col_nam,out_nam):
 			fout[nam] = df[[ eval(col_fun)(h,col) for h in height ]].copy()
+		
+			# print(456)
+
 			fout[nam].columns = array([0]+height[:-1]).astype(int)
+
 			fout[nam][int(height[-1])] = 0
+
+
 
 		## process other parameter
 		if oth_col is not None:

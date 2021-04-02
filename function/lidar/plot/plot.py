@@ -50,7 +50,7 @@ def plot_all(dt_dic,fig_path='.',freq='5h'):
 	mkdir(save_path) if not exists(save_path) else None
 
 	## function
-	def _plot(_nam):
+	def _plot_pcolor(_nam):
 
 		## parameter
 		fs = 13.
@@ -92,21 +92,22 @@ def plot_all(dt_dic,fig_path='.',freq='5h'):
 		close()
 	
 	_plot('ws')
-	
-	
-	
+	# _plot('z_ws')
 
-	
+	## plot ws wd quiver
+	def _plot_quiver():
+		## parameter
+		fs = 13.
+		setting = meta[quiver]
+
+		## plot ws, wd pcolormesh
+		dt = dt_dic[_nam]
+
+		## plot quiver with cmap, same length quivers
 
 
 
-
-
-
-
-
-	## plot z_ws pcolormesh
-
+		##
 
 
 

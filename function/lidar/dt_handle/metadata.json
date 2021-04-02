@@ -22,7 +22,7 @@
 					"extension" : ".csv",
 					"freq"		: "10T",
 					"height"	: [38,59,79,99,119,139,159,179,199,224,249],
-					"col_func"	: "lambda _h, _col: f'{_col} at {_h}m '",
+					"col_func"	: "lambda _h, _col: f'{_col} at {_h}m'",
 					"col_nam"	: ["Packets in Average","Wind Direction (deg)","Horizontal Wind Speed (m/s)",
 								   "Horizontal Wind Speed Min (m/s)","Horizontal Wind Speed Max (m/s)",
 								   "Horizontal Wind Speed Std. Dev. (m/s)","Vertical Wind Speed (m/s)","TI"],

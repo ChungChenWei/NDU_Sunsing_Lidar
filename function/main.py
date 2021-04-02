@@ -19,23 +19,7 @@ def run():
 	# reader = NDU.reader(path,start_dtm,final_dtm,reset=False)
 	# dt = reader.get_data()
 
-	# start_dtm = dtm(2015,1,23,12,30,0)
-	# final_dtm = dtm(2015,1,23,15,30,0)
-	# path = pth('..','data','Lidar_Sunsing_SSC_testdata')
-	# reader = lidar_SSC(path,start_dtm,final_dtm,reset=True)
-	# dt1 = reader.get_data()
 
-	# start_dtm = dtm(2020,11,27,0,0,0)
-	# final_dtm = dtm(2020,11,28,0,0,0)
-	# path = pth('..','data','Lidar_Sunsing_RCEC_testdata')
-	# reader = lidar_RCEC(path,start_dtm,final_dtm,reset=True)
-	# dt2 = reader.get_data()
-
-	# start_dtm = dtm(2014,12,29,1,30,0)
-	# final_dtm = dtm(2014,12,29,2,0,0)
-	# path = pth('..','data','Lidar_Sunsing_TORI_testdata')
-	# reader = lidar_TORI(path,start_dtm,final_dtm,reset=True)
-	# dt3 = reader.get_data()
 
 
 

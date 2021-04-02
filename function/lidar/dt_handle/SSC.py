@@ -11,7 +11,7 @@
 
 
 from lidar.dt_handle import lidar_reader, dtm, pth
-from pandas import read_excel
+from pandas import read_csv
 
 
 class reader(lidar_reader):
@@ -19,9 +19,16 @@ class reader(lidar_reader):
 		super().__init__(_path,_sta,_fin,_nam='SSC',_reset=reset)
 
 	def _lidar_reader__raw_reader(self,_flist,_file):
-		with open(pth(self.path,'r',encoding='utf-8',errors='ignore')) as f:
-			_flist.append(read_csv(f,parse_dates=['Time and Date'],skiprows=1
-									 ).set_index('Time and Date').resample('10T').mean())
+		with open(pth(self.path,_file),'r',encoding='utf-8',errors='ignore') as f:
+
+
+
+			## 先取出資料 然後 在進行分析判斷 在把資料塞回去 index  
+
+			_flist.append(read_csv(f,skiprows=1).set_index('Time and Date').resample('10T').mean())
+
+			
+
 		return _flist
 
 

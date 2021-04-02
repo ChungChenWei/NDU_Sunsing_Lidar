@@ -92,7 +92,7 @@ class lidar_reader:
 		## read raw data
 		f_list = []
 		for file in listdir(self.path):
-			if ext_nam not in file: continue
+			if ext_nam not in file.lower(): continue
 			print(f"\r\t\treading {file}",end='')
 
 			f_list = self.__raw_reader(f_list,file)

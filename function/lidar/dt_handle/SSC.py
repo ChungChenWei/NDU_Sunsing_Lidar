@@ -23,9 +23,30 @@ class reader(lidar_reader):
 
 
 
-			## 先取出資料 然後 在進行分析判斷 在把資料塞回去 index  
+			## 先取出資料 然後 在進行分析判斷 在把資料塞回去 index
+			_temp = read_csv(f,skiprows=1)
+			_temp['Time and Date'].replace('\u4e0a\u5348','AM',inplace=True)
+			_temp['Time and Date'].replace('\u4e0b\u5348','PM',inplace=True)
+			try:
+				_time = _temp['Time and Date'].strftime
 
-			_flist.append(read_csv(f,skiprows=1).set_index('Time and Date').resample('10T').mean())
+
+			# _sta, _fin = .iloc[[0,-1]]
+
+			# if '\u5348' in 
+
+
+ in _time: str_code = '%Y/%m/%d '
+			if  in _time: str_code = ''
+
+
+
+.strftime('')
+
+
+
+
+			# _flist.append(.set_index('Time and Date').resample('10T').mean())
 
 			
 

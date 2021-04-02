@@ -1,0 +1,30 @@
+{
+	"__comment_radio": "this is metadata of 2 soundings",
+	"radio": {
+			"ST"  : {
+					"Time" : "Time",
+					"P"    : "Pressure(hPa)",
+					"Z"    : "Height(m)",
+					"T"    : "Temperature(degree C)",
+					"RH"   : "Humidity(%)",
+					"Lat"  : "Lat",
+					"Lon"  : "Lon",
+					"WS"   : "Speed(km/hr)",
+					"WD"   : "Direction(degree)"
+				},
+			"RS41"  : {
+					"Time" : "Time",
+					"P"    : "Pressure(hPa)",
+					"Z"    : "Height(m)",
+					"T"    : "Temperature(degree C)",
+					"RH"   : "Humidity(%)",
+					"Lat"  : "Lat",
+					"Lon"  : "Lon",
+					"WS"   : "Speed(km/hr)",
+					"WD"   : "Direction(degree)"
+				}
+	}
+}
+
+
+

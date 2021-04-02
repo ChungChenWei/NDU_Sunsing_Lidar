@@ -8,7 +8,7 @@ from datetime import datetime as dtm
 from os import listdir, mkdir
 from os.path import join as pth, exists, dirname, realpath
 import pickle as pkl
-# import numpy as n
+from numpy import array, nan
 from pandas import date_range, concat
 import json as jsn
 
@@ -98,20 +98,21 @@ class lidar_reader:
 			f_list = self.__raw_reader(f_list,file)
 		print()
 
-		fout = self.__raw_process(f_list,dt_freq)
+		df = self.__raw_process(f_list,dt_freq)
 
 		##=================================================================================================================
 		## classify data
 		## use dictionary to store data
 		fout = {}
 		for col, nam in zip(col_nam,out_nam):
-			fout[nam] = df[[ eval(col_fun)(h,col) for h in height ]]
-			fout[nam].columns = n.array(height).astype(int)
+			fout[nam] = df[[ eval(col_fun)(h,col) for h in height ]].copy()
+			fout[nam].columns = array([0]+height[:-1]).astype(int)
+			fout[nam][int(height[-1])] = 0
 
 		## process other parameter
 		if oth_col is not None:
 			df.rename(columns=oth_col,inplace=True)
-			fout['other'] = df[list(oth_col.values())]
+			fout['other'] = df[list(oth_col.values())].copy()
 
 		##=================================================================================================================
 		## dump pickle file
@@ -121,15 +122,18 @@ class lidar_reader:
 		return fout
 
 	## get process data
-	def get_data(self,start=None,final=None):
+	def get_data(self,start=None,final=None,mean_freq=None):
 
-		# _mean = self.meta['']   ,mean_freq=None
-
+		## get dataframe data and process to wanted time range
+		_freq = mean_freq if mean_freq is not None else self.meta['freq']
 		self.__time = (start,final) if start is not None else self.__time
 
 		_out = {}
 		for _nam, _val in self.__reader().items():
-			_out[_nam] = _val.loc[self.__time[0]:self.__time[-1]]
+			_out[_nam] = _val.loc[self.__time[0]:self.__time[-1]].resample(_freq).mean()
+
+		## add data name
+		_out['nam'] = f'{self.nam}_lidar'
 
 		return _out
 

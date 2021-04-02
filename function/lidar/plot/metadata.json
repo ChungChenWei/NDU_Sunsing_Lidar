@@ -1,0 +1,22 @@
+{
+
+
+
+
+	"__comment_plot": "this is metadata of 4 lidars plotting",
+
+	"NDU"  : { 
+				"ws" : {
+						"vmin" 	   : 0.1,
+						"vmax" 	   : 30,
+						"ylim_bot" : 0,
+						"ylim_top" : 2000,
+						"cb_label" : "Wind Speed (m/s)" 
+						}
+			}
+
+
+}
+
+
+

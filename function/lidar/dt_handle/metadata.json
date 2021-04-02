@@ -11,7 +11,7 @@
 					"height"	: [100,200,300,400,500,600,700,800,900,1000],
 					"col_func"	: "lambda _h, _col: f'H{int(_h/100)}_{_col}'",
 					"col_nam"	: ["u","v","w","ws","wd"],
-					"out_nam"	: ["u","v","w","ws","wd"],
+					"out_nam"	: ["u","v","z_ws","ws","wd"],
 					"oth_col"	: {"Temp."	   : "temp",
 								   "Humin."	   : "RH",
 								   "Pressure." : "pressure",

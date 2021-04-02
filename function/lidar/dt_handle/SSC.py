@@ -3,9 +3,9 @@
 ## lidar SSC
 ## Smartec Scientific Corp
 ## extension : .xlsx
-## height 	 : 40, 45, 50, 55, 60, 65, 70, 75, 80, 100, 120, 140
-## frequence : 1 min
-## variable  : ws, ws_disp, wd, ws_max, z_ws, z_ws_disp, z_ws_std, cnr, cnr_min, Dopp Spect Broad, dt_ava ; 
+## height 	 : 38, 59, 79, 99, 119, 139, 159, 179, 199, 224, 249
+## frequence : 10 min
+## variable  : packet, wd, ws, ws_min, ws_max, ws_std, z, TI ; 
 ##			   None
 
 
@@ -19,7 +19,12 @@ class reader(lidar_reader):
 		super().__init__(_path,_sta,_fin,_nam='SSC',_reset=reset)
 
 	def _lidar_reader__raw_reader(self,_flist,_file):
-		with open(pth(self.path,_file),'rb') as f:
-			_flist.append(read_excel(f,parse_dates=['Timestamp (end of interval)']
-									 ).set_index('Timestamp (end of interval)').resample('1T').mean())
+		with open(pth(self.path,'r',encoding='utf-8',errors='ignore')) as f:
+			_flist.append(read_csv(f,parse_dates=['Time and Date'],skiprows=1
+									 ).set_index('Time and Date').resample('10T').mean())
 		return _flist
+
+
+
+
+

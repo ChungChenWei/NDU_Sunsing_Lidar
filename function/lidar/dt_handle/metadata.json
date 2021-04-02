@@ -19,15 +19,24 @@
 				},
 
 			"SSC"  : {
-					"extension" : ".xlsx",
-					"freq"		: "1T",
-					"height"	: [40,45,50,55,60,65,70,75,80,100,120,140],
-					"col_func"	: "lambda _h, _col: f'{_h}m {_col}'",
-					"col_nam"	: ["Wind Speed (m/s)","Wind Speed Dispersion (m/s)","Wind Direction (?","Z-wind Dispersion (m/s)",
-								   "Z-wind (m/s)","Wind Speed min (m/s)","Wind Speed max (m/s)","CNR (dB)","CNR min (dB)",
-								   "Dopp Spect Broad (m/s)","Data Availability (%)"],
-					"out_nam"	: ["ws","ws_disp","wd","ws_max","z_ws","z_ws_disp","z_ws_std","cnr","cnr_min","Dopp Spect Broad","dt_ava"],
-					"oth_col"	: null
+					"extension" : ".csv",
+					"freq"		: "10T",
+					"height"	: [38,59,79,99,119,139,159,179,199,224,249],
+					"col_func"	: "lambda _h, _col: f'{_col} at {_h}m '",
+					"col_nam"	: ["Packets in Average","Wind Direction (deg)","Horizontal Wind Speed (m/s)",
+								   "Horizontal Wind Speed Min (m/s)","Horizontal Wind Speed Max (m/s)",
+								   "Horizontal Wind Speed Std. Dev. (m/s)","Vertical Wind Speed (m/s)","TI"],
+					"out_nam"	: ["packet","wd","ws","ws_min","ws_max","ws_std","z","TI"],
+					"oth_col"	: {"Met Compass Bearing (deg)" 			 : "bearing",
+								   "Met Tilt (deg)"	 					 : "tilt",
+								   "Met Air Temp. (C)"					 : "temp",
+								   "Met Pressure (mbar)"				 : "pressure",
+								   "Met Humidity (%)"	 				 : "RH",
+								   "Met Wind Speed (m/s)"				 : "ws_ground",
+								   "Met Wind Direction (deg)"	 		 : "wd_ground",
+								   "Proportion Of Packets With Rain (%)" : "rain",
+								   "Proportion Of Packets with Fog (%)"  : "fog"
+								}
 				},
 
 			"RCEC" : {

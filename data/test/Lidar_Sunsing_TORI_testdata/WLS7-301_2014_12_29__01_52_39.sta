@@ -1,0 +1,46 @@
+HeaderSize=40
+Version=1.1.6
+ID System=WLS7-301
+ID Client=Beijing Leviathan _TORI
+Location=Sino office
+GPS Location=Lat:25.030143°N, Long:121.535592°E
+Comments=test
+FCR Option=OFF
+timezone=UTC+0
+********************
+Windcube Parameters (internal use only)
+********************
+Sampling Frequency (Hz)=250000000.000
+Ref Frequency (Hz)=68000000.000
+Pulses / Line of Sight=20000
+Samples / Pulse=1024
+Reflected Pulse Start=82
+Reflected Pulse End=156
+Ref pulse samples nb=1
+Nb High Pass Filter Points=5
+FFT Window Width=50
+Laser Diode  Current (mA)=1900
+LOS=
+Init Drive Position (°)=0
+Pulse Repetition Rate (Hz)=30000.000
+Pulse Duration (s)=0.000000175
+Trigger Delay Time=0.000000400
+Wavelength (nm)=1543.000
+ScanAngle (°)=28.000
+DirectionOffset (°)=-20.800
+Declination (°)=-20.900
+PitchAngle (°)=0.200
+RollAngle (°)=0.100
+CNRThreshold=-23.000
+VrThreshold (m/s)=1.700
+SigmaFreqThreshold (m/s)=0.750
+WiperCNRThreshold=-19.000
+WiperAltitude (m)=100
+WiperDuration (ms)=100.000
+Altitudes (m)=	40	45	55	65	75	85	95	115	135	155	175	195
+********************
+Timestamp (end of interval)	Int Temp (°C)	Ext Temp (°C)	Pressure (hPa)	Rel Humidity (%)	Wiper count	Vbatt (V)	40m Wind Speed (m/s)	40m Wind Speed Dispersion (m/s)	40m Wind Speed min (m/s)	40m Wind Speed max (m/s)	40m Wind Direction (°)	40m Z-wind (m/s)	40m Z-wind Dispersion (m/s)	40m CNR (dB)	40m CNR min (dB)	40m Dopp Spect Broad (m/s)	40m Data Availability (%)		45m Wind Speed (m/s)	45m Wind Speed Dispersion (m/s)	45m Wind Speed min (m/s)	45m Wind Speed max (m/s)	45m Wind Direction (°)	45m Z-wind (m/s)	45m Z-wind Dispersion (m/s)	45m CNR (dB)	45m CNR min (dB)	45m Dopp Spect Broad (m/s)	45m Data Availability (%)		55m Wind Speed (m/s)	55m Wind Speed Dispersion (m/s)	55m Wind Speed min (m/s)	55m Wind Speed max (m/s)	55m Wind Direction (°)	55m Z-wind (m/s)	55m Z-wind Dispersion (m/s)	55m CNR (dB)	55m CNR min (dB)	55m Dopp Spect Broad (m/s)	55m Data Availability (%)		65m Wind Speed (m/s)	65m Wind Speed Dispersion (m/s)	65m Wind Speed min (m/s)	65m Wind Speed max (m/s)	65m Wind Direction (°)	65m Z-wind (m/s)	65m Z-wind Dispersion (m/s)	65m CNR (dB)	65m CNR min (dB)	65m Dopp Spect Broad (m/s)	65m Data Availability (%)		75m Wind Speed (m/s)	75m Wind Speed Dispersion (m/s)	75m Wind Speed min (m/s)	75m Wind Speed max (m/s)	75m Wind Direction (°)	75m Z-wind (m/s)	75m Z-wind Dispersion (m/s)	75m CNR (dB)	75m CNR min (dB)	75m Dopp Spect Broad (m/s)	75m Data Availability (%)		85m Wind Speed (m/s)	85m Wind Speed Dispersion (m/s)	85m Wind Speed min (m/s)	85m Wind Speed max (m/s)	85m Wind Direction (°)	85m Z-wind (m/s)	85m Z-wind Dispersion (m/s)	85m CNR (dB)	85m CNR min (dB)	85m Dopp Spect Broad (m/s)	85m Data Availability (%)		95m Wind Speed (m/s)	95m Wind Speed Dispersion (m/s)	95m Wind Speed min (m/s)	95m Wind Speed max (m/s)	95m Wind Direction (°)	95m Z-wind (m/s)	95m Z-wind Dispersion (m/s)	95m CNR (dB)	95m CNR min (dB)	95m Dopp Spect Broad (m/s)	95m Data Availability (%)		115m Wind Speed (m/s)	115m Wind Speed Dispersion (m/s)	115m Wind Speed min (m/s)	115m Wind Speed max (m/s)	115m Wind Direction (°)	115m Z-wind (m/s)	115m Z-wind Dispersion (m/s)	115m CNR (dB)	115m CNR min (dB)	115m Dopp Spect Broad (m/s)	115m Data Availability (%)		135m Wind Speed (m/s)	135m Wind Speed Dispersion (m/s)	135m Wind Speed min (m/s)	135m Wind Speed max (m/s)	135m Wind Direction (°)	135m Z-wind (m/s)	135m Z-wind Dispersion (m/s)	135m CNR (dB)	135m CNR min (dB)	135m Dopp Spect Broad (m/s)	135m Data Availability (%)		155m Wind Speed (m/s)	155m Wind Speed Dispersion (m/s)	155m Wind Speed min (m/s)	155m Wind Speed max (m/s)	155m Wind Direction (°)	155m Z-wind (m/s)	155m Z-wind Dispersion (m/s)	155m CNR (dB)	155m CNR min (dB)	155m Dopp Spect Broad (m/s)	155m Data Availability (%)		175m Wind Speed (m/s)	175m Wind Speed Dispersion (m/s)	175m Wind Speed min (m/s)	175m Wind Speed max (m/s)	175m Wind Direction (°)	175m Z-wind (m/s)	175m Z-wind Dispersion (m/s)	175m CNR (dB)	175m CNR min (dB)	175m Dopp Spect Broad (m/s)	175m Data Availability (%)		195m Wind Speed (m/s)	195m Wind Speed Dispersion (m/s)	195m Wind Speed min (m/s)	195m Wind Speed max (m/s)	195m Wind Direction (°)	195m Z-wind (m/s)	195m Z-wind Dispersion (m/s)	195m CNR (dB)	195m CNR min (dB)	195m Dopp Spect Broad (m/s)	195m Data Availability (%)	
+2014/12/29 01:53	28.80	13.71	1022.60	100.00	0	NaN	1.72	0.24	1.30	2.04	318.2	-0.33	0.17	-11.1	-11.6	1.09	81		1.73	0.21	1.44	2.03	315.8	-0.33	0.17	-10.8	-11.3	1.01	81		1.45	0.07	1.32	1.58	310.1	-0.24	0.17	-10.1	-10.8	1.01	81		1.05	0.14	0.85	1.26	300.5	-0.12	0.07	-9.3	-10.3	1.02	81		1.02	0.13	0.83	1.27	293.6	0.09	0.12	-8.5	-9.6	0.97	81		1.11	0.14	0.82	1.39	286.3	0.21	0.16	-7.9	-9.0	0.90	81		1.22	0.14	0.97	1.43	274.7	0.26	0.16	-7.8	-8.6	0.88	81		1.83	0.14	1.58	2.07	226.2	0.23	0.08	-8.3	-8.7	0.94	81		1.52	0.10	1.31	1.70	218.9	0.32	0.12	-9.4	-9.7	0.92	81		1.97	0.17	1.64	2.21	225.8	0.36	0.07	-10.6	-11.2	0.91	81		2.47	0.10	2.35	2.72	239.4	0.52	0.04	-11.8	-12.7	0.95	81		3.03	0.22	2.62	3.30	242.1	0.46	0.05	-12.9	-13.9	0.95	81	
+2014/12/29 01:54	28.80	13.71	1022.60	100.00	0	NaN	1.33	0.44	0.46	2.24	335.6	-0.17	0.14	-11.1	-11.6	1.10	100		1.28	0.39	0.60	2.16	332.9	-0.17	0.14	-10.8	-11.3	1.03	100		1.27	0.18	0.87	1.62	326.5	-0.26	0.13	-10.1	-10.7	1.02	100		1.22	0.18	0.95	1.70	320.1	-0.30	0.17	-9.3	-10.2	1.03	100		1.16	0.19	0.81	1.95	306.0	-0.27	0.19	-8.5	-9.5	0.97	100		1.21	0.19	0.92	1.99	289.0	-0.20	0.17	-7.9	-9.0	0.91	100		1.34	0.26	0.95	1.86	275.9	-0.07	0.14	-7.8	-8.7	0.90	100		1.43	0.26	0.93	1.90	268.1	0.16	0.19	-8.4	-8.8	0.90	100		1.17	0.12	0.95	1.49	246.5	0.25	0.16	-9.4	-9.9	0.90	100		1.25	0.46	0.57	2.09	244.0	0.24	0.27	-10.6	-11.4	0.94	100		1.12	0.61	0.27	2.42	246.3	0.27	0.29	-11.9	-12.8	0.94	100		1.43	0.72	0.17	2.90	236.3	0.42	0.23	-13.2	-14.1	0.96	100	
+2014/12/29 01:55	28.80	13.71	1022.60	100.00	0	NaN	1.27	0.18	0.70	1.64	349.0	-0.28	0.20	-11.3	-11.8	1.09	100		1.19	0.15	0.91	1.50	346.8	-0.28	0.20	-10.9	-11.4	1.03	100		1.08	0.17	0.79	1.40	328.6	-0.28	0.20	-10.1	-10.7	1.01	100		1.20	0.13	0.93	1.42	303.2	-0.16	0.21	-9.3	-10.2	1.01	100		1.32	0.29	0.87	1.96	292.5	0.03	0.19	-8.5	-9.4	0.97	100		1.31	0.47	0.47	2.26	294.8	0.14	0.22	-7.9	-8.8	0.91	100		1.21	0.39	0.45	1.86	299.4	0.13	0.23	-7.7	-8.5	0.89	100		1.19	0.19	0.89	1.59	296.3	-0.03	0.15	-8.2	-8.6	0.91	100		0.84	0.27	0.29	1.45	291.4	-0.22	0.13	-9.3	-9.9	0.91	100		1.12	0.44	0.48	1.86	290.7	-0.31	0.11	-10.6	-11.6	0.91	100		1.42	0.53	0.61	2.20	293.0	-0.24	0.16	-11.9	-13.3	0.90	100		1.40	0.49	0.32	2.13	314.0	-0.10	0.16	-13.2	-14.9	0.95	100	
+2014/12/29 01:56	28.80	13.71	1022.60	100.00	0	NaN	0.82	0.26	0.02	1.18	4.4	0.19	0.17	-11.3	-11.9	1.07	100		0.72	0.29	0.06	1.15	356.3	0.19	0.17	-10.8	-11.6	1.02	100		0.62	0.24	0.21	1.04	355.2	0.13	0.19	-10.1	-10.9	1.02	100		0.59	0.29	0.07	1.04	3.7	0.18	0.22	-9.2	-10.1	1.02	100		0.58	0.24	0.14	1.08	359.6	0.25	0.21	-8.4	-9.5	0.96	100		0.71	0.27	0.29	1.29	352.7	0.32	0.16	-7.8	-8.8	0.90	100		0.93	0.29	0.51	1.59	346.8	0.39	0.13	-7.7	-8.4	0.90	100		1.23	0.18	0.86	1.67	340.4	0.41	0.19	-8.3	-9.0	0.91	100		1.72	0.34	1.09	2.32	328.2	0.34	0.23	-9.6	-10.6	0.92	100		2.29	0.38	1.63	3.13	325.3	0.34	0.26	-10.9	-12.2	0.95	100		2.36	0.39	1.75	3.35	324.3	0.20	0.22	-12.1	-13.6	0.97	100		2.46	0.40	1.50	3.04	326.2	0.08	0.17	-13.3	-14.9	0.97	100	

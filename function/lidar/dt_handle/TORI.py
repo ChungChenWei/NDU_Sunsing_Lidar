@@ -24,3 +24,8 @@ class reader(lidar_reader):
 			_flist.append(read_table(f,skiprows=41,parse_dates=['Timestamp (end of interval)']
 									 ).set_index('Timestamp (end of interval)').resample('1T').mean())
 		return _flist
+
+
+
+
+

@@ -17,11 +17,9 @@ if __name__=='__main__':
 	start = dtm.now().timestamp()
 	print(f"program start : {dtm.now().strftime('%m/%d %X')}\n")
 
-    run()
-
-    final = dtm.now().timestamp()
-    runtime = (final-start)/60.
-    print(f'\nProgram done\nrunning time = {int(runtime):3d} min {(runtime-int(runtime))*60.:6.3f} s')
+  final = dtm.now().timestamp()
+  runtime = (final-start)/60.
+  print(f'\nProgram done\nrunning time = {int(runtime):3d} min {(runtime-int(runtime))*60.:6.3f} s')
     
 
 def run():

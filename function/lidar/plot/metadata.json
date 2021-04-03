@@ -6,14 +6,81 @@
 	"__comment_plot": "this is metadata of 4 lidars plotting",
 
 	"NDU"  : { 
-				"ws" : {
-						"vmin" 	   : 0.1,
-						"vmax" 	   : 30,
-						"ylim_bot" : 0,
-						"ylim_top" : 2000,
-						"cb_label" : "Wind Speed (m/s)" 
-						}
+				"ws"     : {
+							"vmin" 	   : 0.1,
+							"vmax" 	   : 30,
+							"ylim_bot" : 0,
+							"ylim_top" : 2000,
+							"cb_label" : "Wind Speed (m/s)" 
+							},
+
+				"z_ws"   : {
+							"vmin" 	   : 0.1,
+							"vmax" 	   : 30,
+							"ylim_bot" : 0,
+							"ylim_top" : 2000,
+							"cb_label" : "Wind Speed (m/s)" 
+							},
+
+				"quiver" : {
+							"ylim_bot" : 0,
+							"ylim_top" : 2000,
+							"sep"	   : 1,
+							"cb_label" : "Wind Speed (m/s)" 
+							}
+			},
+
+
+	"SSC"  : { 
+				"ws"     : {
+							"vmin" 	   : 0.1,
+							"vmax" 	   : 15,
+							"ylim_bot" : 0,
+							"ylim_top" : 450,
+							"cb_label" : "Wind Speed (m/s)" 
+							},
+
+				"z_ws"   : {
+							"vmin" 	   : 0.1,
+							"vmax" 	   : 10,
+							"ylim_bot" : 0,
+							"ylim_top" : 450,
+							"cb_label" : "Wind Speed (m/s)" 
+							},
+
+				"quiver" : {
+							"ylim_bot" : 0,
+							"ylim_top" : 450,
+							"sep"	   : 1,
+							"cb_label" : "Wind Speed (m/s)" 
+							}
+			},
+
+	"RCEC" : { 
+				"ws"     : {
+							"vmin" 	   : 0.1,
+							"vmax" 	   : 20,
+							"ylim_bot" : 0,
+							"ylim_top" : 8000,
+							"cb_label" : "Wind Speed (m/s)" 
+							},
+
+				"z_ws"   : {
+							"vmin" 	   : 0.1,
+							"vmax" 	   : 5,
+							"ylim_bot" : 0,
+							"ylim_top" : 8000,
+							"cb_label" : "Wind Speed (m/s)" 
+							},
+
+				"quiver" : {
+							"ylim_bot" : 0,
+							"ylim_top" : 500,
+							"sep"	   : 2,
+							"cb_label" : "Wind Speed (m/s)" 
+							}
 			}
+
 
 
 }

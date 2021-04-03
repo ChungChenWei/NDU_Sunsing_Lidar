@@ -12,6 +12,7 @@
 from lidar.dt_handle import lidar_reader, dtm, pth
 from pandas import read_csv
 from numpy import arange
+from datetime import timedelta as dtmdt
 
 
 class reader(lidar_reader):
@@ -24,20 +25,19 @@ class reader(lidar_reader):
 			_temp = read_csv(f,skiprows=1)
 
 			_tm_list = []
-			for idx, _ in enumerate(_temp['Time and Date']):
+			for _ in _temp['Time and Date']:
+				
 				if '\u4e0a\u5348' in _:
-					_tm_list.append(_.replace('\u4e0a\u5348','AM'))
+					_tm_list.append(dtm.strptime(_.replace('\u4e0a\u5348','AM'),'%Y/%m/%d %p %X'))
+				elif '\u4e0b\u5348' in _:
+					_tm_list.append(dtm.strptime(_.replace('\u4e0b\u5348','PM'),'%Y/%m/%d %p %X')+dtmdt(hours=12))
 				else:
-					_tm_list.append(_.replace('\u4e0b\u5348','PM'))
+					_tm_list = _temp['Time and Date'].apply(lambda _: dtm.strptime(_,'%d/%m/%Y %X')).copy()
+					break
 
 			_temp['Time'] = _tm_list
-
-			try:
-				_time = _temp['Time'].apply(lambda _: dtm.strptime(_,'%Y/%m/%d %p %X')).copy()
-			except:
-				_time = _temp['Time'].apply(lambda _: dtm.strptime(_,'%d/%m/%Y %X')).copy()
 			
-			_flist.append(_temp.set_index(_time).resample('10T').mean())
+			_flist.append(_temp.set_index('Time').resample('10T').mean())
 			
 
 		return _flist

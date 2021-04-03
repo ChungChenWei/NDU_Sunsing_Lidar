@@ -50,15 +50,24 @@ def run():
 	# plot.plot_all(dt,pth('..','picture'),freq='1h')
 
 	## GRIMM
-	start_dtm = dtm(2021,4,1)
-	final_dtm = dtm(2021,4,3)
-	path = pth('..','data','GRIMM')
-	reader = GRIMM.reader(path,start_dtm,final_dtm,reset=True)
-	dt = reader.get_data()
+	# start_dtm = dtm(2021,4,1)
+	# final_dtm = dtm(2021,4,3)
+	# path = pth('..','data','GRIMM')
+	# reader = GRIMM.reader(path,start_dtm,final_dtm,reset=True)
+	# dt = reader.get_data()
 
-	# plot.plot_all(dt,pth('..','picture'),freq='1h')
+
+	## WXT
+	start_dtm = dtm(2021,4,1)
+	final_dtm = dtm(2021,4,4)
+	path = pth('..','data','WXT')
+	wxt = WXT.reader(path,start_dtm,final_dtm,reset=False)
+	# dt = wxt.get_data()
+
+	dt = wxt.plot(pth('..','picture'),tick_freq='12h',mean_freq='1h')
 
 	return dt
+
 
 
 

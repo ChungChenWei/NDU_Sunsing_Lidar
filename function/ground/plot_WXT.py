@@ -4,14 +4,14 @@ import matplotlib.dates as mdate
 import numpy as np
 from time import *
 
-fname = 'YilanObs_WXT.dat.txt'
+fname = '../../data/WXT/CR1000_Data1min_2021040317LST.dat'
 
 def plot_WXT(fname):
 
     df = read_WXT(fname)
     fig, ax = plt.subplots(3, 1, sharex = 'col')
 
-    ax[0].plot(df['Time'][:], df['T'][:], 'r-')
+    ax[0].plot(df['T'], 'r-')
     ax[0].plot(df['Time'][:], df['Td'][:], 'g-')
     ax[0].set_ylabel('($^oC$)')
     
@@ -45,3 +45,4 @@ def plot_WXT_daily_mean(fname):
         
 ##%
 plot_WXT(fname)
+plot_WXT_daily_mean(fname)

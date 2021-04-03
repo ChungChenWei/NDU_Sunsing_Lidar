@@ -1,0 +1,39 @@
+{
+
+
+
+
+	"__comment_plot": "this is metadata of WXT and GRIMM",
+
+	"WXT"  : { 
+				"T"     : {
+							"ylim_bot" : 16,
+							"ylim_top" : 37,
+							"ylabel"   : "Temp. ($^oC$)",
+							"title"    : "Temperature and dew point",
+							"color"    : "#ff4c4d"
+							},
+
+				"P" 	: {
+							"ylim_bot" : 999,
+							"ylim_top" : 1013,
+							"ylabel"   : "P. (mb)",
+							"title"	   : "Pressure",
+							"color"	   : "#464637"
+							},
+
+				"wind"	: {
+							"ylabel"   : "wind speed (m/s)",
+							"title"	   : "Wind",
+							"itv"	   : 1
+							}
+
+				}
+
+
+
+
+
+
+
+}

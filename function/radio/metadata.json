@@ -1,28 +1,53 @@
 {
 	"__comment_radio": "this is metadata of 2 soundings",
 	"radio": {
-			"ST"  : {
+			"ST"    : {
 					"Time" : "Time",
 					"P"    : "Pressure(hPa)",
 					"Z"    : "Height(m)",
-					"T"    : "Temperature(degree C)",
+					"T"    : {"name":"Temperature(degree C)","unit":"degC"},
 					"RH"   : "Humidity(%)",
 					"Lat"  : "Lat",
 					"Lon"  : "Lon",
-					"WS"   : "Speed(km/hr)",
+					"WS"   : {"name":"Speed(km/hr)","unit":"km/hr"},
 					"WD"   : "Direction(degree)"
 				},
 			"RS41"  : {
-					"Time" : "Time",
-					"P"    : "Pressure(hPa)",
-					"Z"    : "Height(m)",
-					"T"    : "Temperature(degree C)",
-					"RH"   : "Humidity(%)",
+					"P"    : "P",
+					"Z"    : "HeightMSL",
+					"T"    : {"name":"Temp","unit":"degC"},
+					"RH"   : "RH",
 					"Lat"  : "Lat",
 					"Lon"  : "Lon",
-					"WS"   : "Speed(km/hr)",
-					"WD"   : "Direction(degree)"
+					"WS"   : {"name":"Speed","unit":"m/s"},
+					"WD"   : "Dir"
 				}
+	},
+	"skewT": {
+		"boundary" : {
+			"T":[-200, 40, 5], 
+			"P":[1100,100]
+		},
+		"linestyle" : {
+            "dry_adiabats":{
+                "color"     : "blue",
+                "alpha"     : 0.5,
+                "linestyle" : "solid"
+                },
+            "moist_adiabats":{
+                "color"     : "green",
+                "alpha"     : 0.5,
+                "linestyle" : "solid"
+                },
+            "mixing_lines":{
+                "color"     : "black",
+                "alpha"     : 0.4,
+                "linestyle" : "dashed"
+                }
+        },
+        "wind" : {
+        	"skip" : 35
+        }
 	}
 }
 

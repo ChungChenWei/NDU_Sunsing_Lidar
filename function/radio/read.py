@@ -2,7 +2,7 @@ import logging
 from json import load
 from pathlib import Path
 from pandas import DataFrame
-from pandas import read_csv
+from pandas import read_csv, read_table
 from datetime import datetime  as dtmdtm
 from datetime import timedelta as dtmdt
 
@@ -21,77 +21,54 @@ import numpy as np
 with open('metadata.json') as js:
     meta = load(js)
 
-shp = shapefile.Reader(r'D:\map\twcounty\twcounty')
-rec = shp.records()
-shapes = shp.shapes()
+# shp = shapefile.Reader(r'D:\map\twcounty\twcounty')
+# rec = shp.records()
+# shapes = shp.shapes()
 
-class RS41reader:
-    pass
+def metadataReader(filePath):
+    with open(filePath) as js:
+        return load(js)
 
-
-## 2305 05 59 50
-
-class STreader:
-    # import logging
-    # __logger = logging.getLogger('__main__')
-    def __init__(self, no, release_time, path=Path('.')):
-        self.no   = no
-        self.release_time = dtmdtm.strptime(release_time,"%Y/%m/%d %H:%M:%S") 
+class sounding:
+    def __init__(self, path=Path('.'), metaFilePath=Path('.')):
         self.path = path
-        self.meta = meta["radio"]["ST"]
-    def read(self):
-        no_file   = self.path / f"no_{self.no}.csv"
-        logger.info(f"Start reading ST no_{self.no}")
+        self.meta = metadataReader(metaFilePath)
+        self.plotMeta = self.meta["skewT"]
 
-        with open(no_file) as st_file:
-            sounding = read_csv(st_file,parse_dates=[0])
-        ## timer read
-        time          = sounding['Time'][:]
-        ## release time mask
-        time_mask     = time - self.release_time >= dtmdt(seconds=0)
-        ## sensor data
-        time_released = sounding[self.meta["Time"]][time_mask].to_numpy(dtype=float)
-        P_released    = sounding[self.meta["P"]][time_mask].to_numpy(dtype=float)
-        T_released    = sounding[self.meta["T"]][time_mask].to_numpy(dtype=float)
-        Z_released    = sounding[self.meta["Z"]][time_mask].to_numpy(dtype=float)
-        RH_released   = sounding[self.meta["RH"]][time_mask].to_numpy(dtype=float)
-        WS_released   = sounding[self.meta["WS"]][time_mask].to_numpy(dtype=float)
-        WD_released   = ((sounding[self.meta["WD"]][time_mask] - 180)%360).to_numpy(dtype=float)
+    def reader(self, sounding, wdShift=0):
+        if(type(sounding)==None):
+            logger.error("sounding data empty")
+            return
+
+        ## basic variables
+        P_released    = sounding[self.soundingMeta["P"]][:].to_numpy(dtype=float)
+        T_released    = sounding[self.soundingMeta["T"]["name"]][:].to_numpy(dtype=float)
+        Z_released    = sounding[self.soundingMeta["Z"]][:].to_numpy(dtype=float)
+        RH_released   = sounding[self.soundingMeta["RH"]][:].to_numpy(dtype=float)
+        WS_released   = sounding[self.soundingMeta["WS"]["name"]][:].to_numpy(dtype=float)
+        WD_released   = ((sounding[self.soundingMeta["WD"]][:] - wdShift)%360).to_numpy(dtype=float)
         ## metpy cal
-        TD_released   = mcalc.dewpoint_from_relative_humidity(T_released * units.degC, RH_released/100).m
-        U_released, V_released = mcalc.wind_components(WS_released * units.km/units.hr, WD_released * units.degrees)
+        TD_released   = mcalc.dewpoint_from_relative_humidity(T_released * units(f'{self.soundingMeta["T"]["unit"]}'), RH_released/100).m
+        U_released, V_released = mcalc.wind_components(WS_released * units(f'{self.soundingMeta["WS"]["unit"]}'), WD_released * units.degrees)
 
         return P_released * units.hPa, T_released * units.degreeC, TD_released * units.degreeC, U_released, V_released
 
-    def plot(self, picPath=Path('.')):
-        boundary = {"T":[-200, 40, 5], "P":[1100,100]}
-        linestyle = {
-            "dry_adiabats":{
-                "t0"        : np.arange(-100, 300, 10) * units.celsius,
-                "color"     : "blue",
-                "alpha"     : 0.5,
-                "linestyle" : "solid"
-                },
-            "moist_adiabats":{
-                "color"     : "green",
-                "alpha"     : 0.5,
-                "linestyle" : "solid"
-                },
-            "mixing_lines":{
-                "color"     : "black",
-                "alpha"     : 0.4,
-                "linestyle" : "dashed"
-                }
-        }
-        fs = 16
+    def plotter(self, skew):
+        boundary  = self.plotMeta["boundary"]
+        linestyle = self.plotMeta["linestyle"]
+        linestyle["dry_adiabats"]["t0"] = np.arange(-100, 300, 10) * units.celsius
+        self.fs   = 16
+        ## basic vars
+        P, T, Td, U, V = self.read()
+        ## LCL
+        LCL_parcel_idx = 0
+        LCL_P, LCL_T = mcalc.lcl(P[LCL_parcel_idx], T[LCL_parcel_idx], Td[LCL_parcel_idx])
 
-        ## Data input
-        P,T,Td,U,V = self.read()
+        ## shift profile
         profP      = P
         profT      = T
         profTd     = Td
         ## calc 
-        LCL_P, LCL_T = mcalc.lcl(P[0], T[0], Td[0])
         # LFC_P, LFC_T = mcalc.lfc(P, T, Td)
         while(True):
             try:
@@ -105,28 +82,15 @@ class STreader:
                 if(len(profP)==0):
                     break
 
-        ## fig setting
-        grid = gs.GridSpec(3,3)
-        fig  = plt.figure(figsize=(12, 12))
-        fig.text(0.55,0.89,f"no_{self.no} {self.release_time} LST",fontsize=fs-6)
-
-        # fig.subplots_adjust(top = 0.9, bottom = 0.1, left = 0.05, right = 0.96, wspace = 0.08, hspace = 0.25)
-
-        skew = SkewT(fig, subplot=grid[:, :], rotation=45)
-        
         ##special lines
         skew.ax.set_xticks(np.arange(boundary["T"][0], boundary["T"][1], boundary["T"][2]))
         skew.plot_dry_adiabats(**linestyle["dry_adiabats"])
         skew.plot_moist_adiabats(**linestyle["moist_adiabats"]) 
         skew.plot_mixing_lines(p=[1000,500]*units.hPa,**linestyle["mixing_lines"])
         
-        ##title etc.,
-        UTC = max((self.release_time + dtmdt(minutes=25)).hour, (self.release_time - dtmdt(minutes=25)).hour) - 8
+        skew.ax.set_xlabel('[$\degree C$]', fontsize = self.fs)
+        skew.ax.set_ylabel('[$hPa$]',       fontsize = self.fs)
 
-        skew.ax.set_title(f"Skew-T Log-P Diagram Storm tracker {UTC} UTC\n")
-        skew.ax.set_xlabel('[$\degree C$]', fontsize = fs)
-        skew.ax.set_ylabel('[$hPa$]', fontsize = fs)
-    
         skew.ax.set_xlim(-40, 40) 
         skew.ax.set_ylim(boundary["P"][0], boundary["P"][1])
         for i in np.arange(boundary["T"][0], boundary["T"][1], boundary["T"][2]*2):
@@ -138,25 +102,25 @@ class STreader:
         ### wind bar
         # idx  = mcalc.resample_nn_1d(P.m, np.array([1000, 975, 950, 925, 900, 850, 800, 750, 700, 650, 600, 500]))
         # skew.plot_barbs(P[idx], U[idx], V[idx], plot_units = units('knots'), xloc=1.05)
-        skip=35
-        skew.plot_barbs(P[::skip], U[::skip], V[::skip], plot_units = units('m/s'), xloc=1.05)
+        skip=self.plotMeta["wind"]["skip"]
+        skew.plot_barbs(P[P.m>=100][::skip], U[P.m>=100][::skip], V[P.m>=100][::skip], plot_units = units('m/s'), xloc=1.05)
 
         skew.plot(LCL_P, LCL_T, 'ko', markerfacecolor='black')
         skew.plot(profP, parcel_prof, 'k', linewidth=2)
 
-        ## CAPE CIN
-        cape, cin = mcalc.cape_cin(profP, profT, profTd, parcel_prof)
-        skew.shade_cin(profP,  profT, parcel_prof, color='b', alpha=0.5)
-        skew.shade_cape(profP, profT, parcel_prof, color='r', alpha=0.5)
-        fig.text(0.55,0.89,f"no_{self.no} {self.release_time} LST",fontsize=fs-6)
 
-        figx = 0.61
-        figy = 0.85
-        fig.text(figx, figy     , f'$CAPE$= {cape.m:.1f} $J/kg$', fontsize = fs-4)
-        fig.text(figx, figy-0.02, f'$CIN$ = {cin.m:.1f} $J/kg$' , fontsize = fs-4)
-        fig.text(figx, figy-0.04, f'$LCL$ = {LCL_P.m:.1f} $hPa$', fontsize = fs-4)
+        # ## CAPE CIN
+        # cape, cin = mcalc.cape_cin(profP, profT, profTd, parcel_prof)
+        # skew.shade_cin(profP,  profT, parcel_prof, color='b', alpha=0.5)
+        # skew.shade_cape(profP, profT, parcel_prof, color='r', alpha=0.5)
+        # fig.text(0.55,0.89,f"no_{self.no} {self.release_time} LST",fontsize=fs-6)
+
+        # figx = 0.61
+        # figy = 0.85
+        # fig.text(figx, figy     , f'$CAPE$= {cape.m:.1f} $J/kg$', fontsize = fs-4)
+        # fig.text(figx, figy-0.02, f'$CIN$ = {cin.m:.1f} $J/kg$' , fontsize = fs-4)
+        # fig.text(figx, figy-0.04, f'$LCL$ = {LCL_P.m:.1f} $hPa$', fontsize = fs-4)
         # fig.text(figx, figy-0.06, f'$LFC$ = {LFC_P.m:.1f} $hPa$', fontsize = fs-4)
-
 
         # # Create a hodograph
         # ax1 = fig.add_subplot(grid[0, -1])
@@ -186,9 +150,81 @@ class STreader:
         # ax2.set_xlabel('longitude',  fontsize = 15.)
         # ax2.set_ylabel('latitude', fontsize = 15.)
 
+class RS41reader(sounding):
+    def __init__(self, release_time, path=Path('.'), metaPath=Path('.')):
+        super().__init__(path=path)
+        self.release_time = dtmdtm.strptime(release_time,"%Y%m%d_%H%M")
+        self.meta = metadataReader(metaPath / 'metadata.json')["radio"]["RS41"]
 
+    def read(self):
+        no_file   = self.path / f"edt2_{self.release_time.strftime('%Y%m%d_%H%M')}.txt"
+        logger.info(f"Start reading RS41 {self.release_time}")
+
+        with open(no_file) as rs_file:
+            sounding = read_table(rs_file,skiprows=[0,1,2,3,5],delimiter='\s+')
+        
+        return self.reader(sounding)
+
+    def plot(self, picPath=Path('.'), showmode=False):
+        ## fig setting
+        grid = gs.GridSpec(3,3)
+        fig  = plt.figure(figsize=(12, 12))
+
+        # fig.subplots_adjust(top = 0.9, bottom = 0.1, left = 0.05, right = 0.96, wspace = 0.08, hspace = 0.25)
+
+        skew = SkewT(fig, subplot=grid[:, :], rotation=45)
+        
+        self.plotter(skew)
+
+        ## UTC
+        UTC = self.release_time.hour
+
+        fig.text(0.55,0.89,f"{self.release_time} LST",fontsize=fs-6)
+        skew.ax.set_title(f"Skew-T Log-P Diagram RS41 {UTC:02d} UTC\n", fontsize=fs)
+    
+        plt.savefig(picPath / (f"{UTC}Z_{self.release_time.strftime('%Y%m%d_%H%M')}.png"))
+        if(showmode == True):
+            plt.show()
+
+## 2305 05 59 50
+class STreader(sounding):
+    def __init__(self, no, release_time, path=Path('.'), metaPath=Path('.')):
+        super().__init__(path=path, metaFilePath=metaPath / 'metadata.json')
+        self.no   = no
+        self.release_time = dtmdtm.strptime(release_time,"%Y/%m/%d %H:%M:%S") 
+        self.soundingMeta = self.meta["radio"]["ST"]
+
+    def read(self):
+        no_file   = self.path / f"no_{self.no}.csv"
+        logger.info(f"Start reading ST no_{self.no}")
+
+        with open(no_file) as st_file:
+            sounding = read_csv(st_file,parse_dates=[0])
+        ## timer read
+        time          = sounding['Time'][:]
+        sounding = sounding.loc[sounding[self.soundingMeta["Time"]] >= self.release_time]
+
+        return self.reader(sounding, wdShift=180)
+
+    def plot(self, picPath=Path('.'), showmode=False):
+
+        ## fig setting
+        grid = gs.GridSpec(3,3)
+        fig  = plt.figure(figsize=(12, 12))
+        # fig.subplots_adjust(top = 0.9, bottom = 0.1, left = 0.05, right = 0.96, wspace = 0.08, hspace = 0.25)
+        skew = SkewT(fig, subplot=grid[:, :], rotation=45)
+        
+        self.plotter(skew)
+
+        ## UTC
+        UTC = max((self.release_time + dtmdt(minutes=25)).hour, (self.release_time - dtmdt(minutes=25)).hour) - 8
+        
+        fig.text(0.55,0.89,f"no_{self.no} {self.release_time} LST",fontsize=self.fs-6)
+        skew.ax.set_title(f"Skew-T Log-P Diagram Storm tracker {UTC:02d} UTC\n")
+        
         plt.savefig(picPath / (f"{UTC}Z_{self.release_time.strftime('%Y%m%d_%H%M')}_no{self.no}.png"))
-        # plt.show()
+        if(showmode == True):
+            plt.show()
 
 if __name__ == '__main__':
     import logging
@@ -207,115 +243,28 @@ if __name__ == '__main__':
 
     with open('launchdata.json') as js:
         launch = load(js)["launch"]
+    with open('RSlaunchdata.json') as js:
+        RSlaunch = load(js)["launch"]
         
     mode = ""
-    # mode = "DEBUG"
+    mode = "ST"
     if(mode!="DEBUG"):
-        for no, time in launch.items():
-            try:
-                st = STreader(no, time, Path('../../data/ST'))
-                st.plot(Path('../../picture/ST'))
-            except:
-                logger.warning(f"{no} fail", exc_info=True)
+        if(mode == "ST"):
+            for no, time in launch.items():
+                try:
+                    st = STreader(no, time, Path('../../data/ST'))
+                    st.plot(Path('../../picture/ST'))
+                except:
+                    logger.warning(f"{no} fail", exc_info=True)
+        if(mode == "RS"):
+            for time in RSlaunch:
+                try:
+                    rs = RS41reader(time,Path('../../data/RS41/202104_TNNUA_NTU'))
+                    rs.plot(Path('../../picture/RS41'))
+                except:
+                    logger.warning(f"{time} fail", exc_info=True)
     else:
         st = STreader(2285, "2021/04/01 21:00:00", Path('../../data/ST'))
         st.plot(Path('../../picture/ST'))
-
-## radiosonde
-'''
-
-	def radiosonde_NTU(self,start,final):
-		## read pickle or process raw data
-		if ('radio_ntu.pkl' in listdir(self.path_radio_NTU))&(~self.reset):
-			print(f"\n\t{dtm.now().strftime('%m/%d %X')} : Reading pickle file of NTU radiosonde")
-			with open(pth(self.path_radio_NTU,'radio_ntu.pkl'),'rb') as f:
-				fout = pkl.load(f)
-			return fout
-		else: 
-			print(f"\n\t{dtm.now().strftime('%m/%d %X')} : Reading file of NTU radiosonde")
-
-		## read raw data
-		fList = []
-		for file in listdir(self.path_radio_NTU):
-			if '.txt' not in file: continue
-			print(f"\r\t\treading {file}",end='')
-
-			with open(pth(self.path_radio_NTU,file),'r',encoding='utf-8',errors='ignore') as f:
-				fList.append(read_table(f,skiprows=[0,1,2,3,5],delimiter='\s+').set_index('HeightMSL'))
-		print()
-		
-		fout = {}
-		for time, _df in zip(self.index(start,final,'1d'),fList):
-			fout[time.strftime('%Y/%m/%d')] = _df
-
-
-		with open(pth(self.path_radio_NTU,'radio_ntu.pkl'),'wb') as f:
-			pkl.dump(fout,f,protocol=pkl.HIGHEST_PROTOCOL)
-
-		## process different height
-		# height = [40,45,50,55,60,65,70,75,80,100,120,140]
-		# col_nam = ['Wind Speed (m/s)','Wind Speed Dispersion (m/s)','Wind Direction (?','Z-wind Dispersion (m/s)','Z-wind (m/s)',
-				   # 'Wind Speed min (m/s)','Wind Speed max (m/s)','CNR (dB)','CNR min (dB)','Dopp Spect Broad (m/s)','Data Availability (%)']
-		# out_nam = ['ws','ws_disp','wd','ws_max','z_ws','z_ws_disp','z_ws_std','cnr','cnr_min','Dopp Spect Broad','dt_ava']
-
-		# fout = {}
-		# for col, nam in zip(col_nam,out_nam):
-			# fout[nam] = _df[[ f'{_h}m {col}' for _h in height ]]
-			# fout[nam].columns = height
-
-		return fout
-
-	def radiosonde_RCEC(self,start,final):
-		## read pickle or process raw data
-		if ('radio_rcec.pkl' in listdir(self.path_radio_RCEC))&(~self.reset):
-			print(f"\n\t{dtm.now().strftime('%m/%d %X')} : Reading pickle file of RCEC radiosonde")
-			with open(pth(self.path_radio_RCEC,'radio_rcec.pkl'),'rb') as f:
-				fout = pkl.load(f)
-			return fout
-		else: 
-			print(f"\n\t{dtm.now().strftime('%m/%d %X')} : Reading file of RCEC radiosonde")
-
-		## read raw data
-		fList = []
-		for file in listdir(self.path_radio_RCEC):
-			if '.txt' not in file: continue
-			print(f"\r\t\treading {file}",end='')
-
-			with open(pth(self.path_radio_RCEC,file),'r',encoding='utf-8',errors='ignore') as f:
-				fList.append(read_table(f,skiprows=2,delimiter=',\s+|\s+',engine='python').set_index('Height'))
-		print()
-		
-		fout = {}
-		for time, _df in zip(self.index(start,final,'1d'),fList):
-			fout[time.strftime('%Y/%m/%d')] = _df
-
-		with open(pth(self.path_radio_RCEC,'radio_rcec.pkl'),'wb') as f:
-			pkl.dump(fout,f,protocol=pkl.HIGHEST_PROTOCOL)
-
-		## process different height
-		# height = [40,45,50,55,60,65,70,75,80,100,120,140]
-		# col_nam = ['Wind Speed (m/s)','Wind Speed Dispersion (m/s)','Wind Direction (?','Z-wind Dispersion (m/s)','Z-wind (m/s)',
-				   # 'Wind Speed min (m/s)','Wind Speed max (m/s)','CNR (dB)','CNR min (dB)','Dopp Spect Broad (m/s)','Data Availability (%)']
-		# out_nam = ['ws','ws_disp','wd','ws_max','z_ws','z_ws_disp','z_ws_std','cnr','cnr_min','Dopp Spect Broad','dt_ava']
-
-		# fout = {}
-		# for col, nam in zip(col_nam,out_nam):
-			# fout[nam] = _df[[ f'{_h}m {col}' for _h in height ]]
-			# fout[nam].columns = height
-
-		return fout
-
-
-
-
-# start_dtm = dtm(2021,3,16,0,0,0)
-# final_dtm = dtm(2021,3,16,0,0,0)
-# dt = reader.radiosonde_RCEC(start_dtm,final_dtm)
-
-
-# start_dtm = dtm(2021,3,16,0,0,0)
-# final_dtm = dtm(2021,3,16,0,0,0)
-# dt = reader.radiosonde_NTU(start_dtm,final_dtm)
-
-
-# '''
+        # rs = RS41reader('20210401_1500',Path('../../data/RS41/202104_TNNUA_NTU'))
+        # rs.plot(Path('../../picture/RS41'))

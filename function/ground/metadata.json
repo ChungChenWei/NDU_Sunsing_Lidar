@@ -26,6 +26,32 @@
 							"ylabel"   : "wind speed (m/s)",
 							"title"	   : "Wind",
 							"itv"	   : 1
+							},
+
+				"diu"	: {
+							"T"     : {
+										"ylim_bot" : 16,
+										"ylim_top" : 37,
+										"ylabel"   : "Temp. ($^oC$)",
+										"title"    : "Dew point",
+										"color"    : "#ff4c4d"
+										},
+
+							"Td"    : {
+										"ylim_bot" : 16,
+										"ylim_top" : 22,
+										"ylabel"   : "Temp. ($^oC$)",
+										"title"    : "Temperature",
+										"color"    : "#00bfff"
+										},
+
+							"P" 	: {
+										"ylim_bot" : 1002,
+										"ylim_top" : 1008,
+										"ylabel"   : "P. (mb)",
+										"title"	   : "Pressure",
+										"color"	   : "#464637"
+										}
 							}
 
 				}

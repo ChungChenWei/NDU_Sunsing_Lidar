@@ -14,7 +14,7 @@ from datetime import datetime as dtm
 from datetime import timedelta as dtmdt
 from os import listdir, mkdir
 from os.path import join as pth, exists, dirname, realpath
-from pandas import read_csv, concat
+from pandas import read_csv, concat, date_range
 from numpy import sin, cos, pi
 from metpy.units import units
 import metpy.calc as mcalc
@@ -150,7 +150,7 @@ class reader:
 		_freq = mean_freq if mean_freq is not None else '1T'
 		self.__time = (start,final) if start is not None else self.__time
 
-		_temp = self.__reader().loc[self.__time[0]:self.__time[-1]]
+		_temp = self.__reader().reindex(date_range(self.__time[0],self.__time[-1],freq=mean_freq))
 
 		_out  = _temp[['ws','wd','wd_std','u','v']].asfreq(_freq)
 		for _nam in ['T','RH','P','Td']: _out[_nam] = _temp[_nam].resample(_freq).mean()
@@ -210,10 +210,48 @@ class reader:
 		fig.text(.5,.03,'Time',ha='center',fontsize=fs)
 		
 		fig.suptitle('WXT data',fontsize=fs+2.,style='italic')
-		fig.savefig(pth(save_path,f'WXR_{df.index[0].strftime("%Y%m%d%H%M")}-{df.index[-1].strftime("%Y%m%d%H%M")}.png'))
+		fig.savefig(pth(save_path,f'WXT_{df.index[0].strftime("%Y%m%d%H%M")}-{df.index[-1].strftime("%Y%m%d%H%M")}.png'))
 		# show()
 		close()
 
+		## plot diurnal cycle
+		df['diurnal'] = df.index.map(lambda _: _.strftime('%H:00'))
+		df_diu = df.groupby('diurnal').mean()
+		x_tick = list(df['diurnal'])[::6]
+
+		## parameter
+		fs = 13.
+		
+		#'''
+		## plot
+		fig, axes = subplots(3,1,figsize=(8,6),dpi=150.,gridspec_kw=dict(wspace=.325,hspace=.325),sharex=False,sharey=False)
+		
+		for _nam, ax in zip(['T','Td','P'],axes.flatten()):
+
+			setting = self.meta['diu'][_nam]
+			ax.plot(df_diu[_nam],c=setting['color'])
+		
+			ax.tick_params(which='major',direction='in',length=7,labelsize=fs-2.5)
+			[ ax.spines[axis].set_visible(False) for axis in ['right','top'] ]
+		
+			ax.set(ylim=(setting['ylim_bot'],setting['ylim_top']),xticks=x_tick)
+			ax.set_xticklabels('')
+		
+			ax.set_ylabel(setting['ylabel'],fontsize=fs)
+		
+			ax.set_title(setting['title'],fontsize=fs)
+
+		ax.set_xticklabels(x_tick)
+
+		fig.text(.5,.03,'Time',ha='center',fontsize=fs)
+		
+		fig.suptitle(f'WXT diurnal cycle : from {df.index[0].strftime("%Y/%m/%d %H%M")} to {df.index[-1].strftime("%Y/%m/%d %H%M")}',fontsize=fs+2.,style='italic')
+		fig.savefig(pth(save_path,f'WXT_diuunal_{df.index[0].strftime("%Y%m%d%H%M")}-{df.index[-1].strftime("%Y%m%d%H%M")}.png'))
+		close()
+		
+
+		
+		
 		return df
 
 

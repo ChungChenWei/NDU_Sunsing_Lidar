@@ -33,7 +33,7 @@
 			},
 
 
-	"SSC"  : { 
+	"SSC"  : {
 				"ws"     : {
 							"vmin" 	   : 0.1,
 							"vmax" 	   : 15,
@@ -63,9 +63,9 @@
 	"RCEC" : { 
 				"ws"     : {
 							"vmin" 	   : 0.1,
-							"vmax" 	   : 20,
+							"vmax" 	   : 10,
 							"ylim_bot" : 0,
-							"ylim_top" : 8000,
+							"ylim_top" : 2500,
 							"cb_label" : "Wind Speed (m/s)" 
 							},
 
@@ -73,14 +73,16 @@
 							"vmin" 	   : 0.1,
 							"vmax" 	   : 5,
 							"ylim_bot" : 0,
-							"ylim_top" : 8000,
+							"ylim_top" : 2500,
 							"cb_label" : "Wind Speed (m/s)" 
 							},
 
 				"quiver" : {
+							"vmin" 	   : 0.1,
+							"vmax" 	   : 10,
 							"ylim_bot" : 0,
-							"ylim_top" : 500,
-							"sep"	   : 2,
+							"ylim_top" : 2500,
+							"sep"	   : 5,
 							"cb_label" : "Wind Speed (m/s)" 
 							}
 			}

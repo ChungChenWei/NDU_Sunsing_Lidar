@@ -36,31 +36,35 @@ with open(pth(cur_file_path,'metadata.json'),'r') as f:
 
 
 ## plot all variable
-def plot_all(dt_dic,fig_path='.',dt_freq='30T',tick_freq='5h'):
+def plot_all(dt_dic,fig_path='.',dt_freq='30T',tick_freq='6h'):
 
 	## parameter
 	dt_nam = dt_dic['nam'].split('_')[0]
 	meta = meta_dt[dt_nam]
+	print(f'Plot {dt_nam} data')
 
 	## make picture dir
 	save_path = pth(fig_path,dt_nam)
 	mkdir(save_path) if not exists(save_path) else None
 
+
 	## function
 	def _plot_pcolor(_nam):
+		print(f'\tplot {dt_nam} : {_nam}')
 
 		## parameter
 		fs = 13.
 		setting = meta[_nam]
 
 		## plot ws, wd pcolormesh
+		## parameter
 		dt = dt_dic[_nam]
-
 		dt.replace(0.,n.nan,inplace=True)
 
-		x_tick = dt.asfreq(freq).index
+		x_tick = dt.asfreq(tick_freq).index
 		x_tick_lab = x_tick.strftime('%Y-%m-%d%n%X')
 
+		## plot
 		fig, ax = subplots(figsize=(12,6),dpi=150.)
 		pm = ax.pcolormesh(dt.index,dt.keys(),dt[:-1].T[:-1],cmap='jet',vmin=setting['vmin'],vmax=setting['vmax'])
 
@@ -90,6 +94,7 @@ def plot_all(dt_dic,fig_path='.',dt_freq='30T',tick_freq='5h'):
 
 	## plot ws wd quiver
 	def _plot_quiver():
+		print(f'\tplot {dt_nam} : quiver')
 
 		## function
 		def wswd2uv(_ws,_wd):
@@ -99,9 +104,7 @@ def plot_all(dt_dic,fig_path='.',dt_freq='30T',tick_freq='5h'):
 		fs = 13.
 		setting = meta['quiver']
 
-		# breakpoint()
-
-		dt_ws, dt_wd = dt_dic['ws'].asfreq(dt_freq)[::setting['sep']], dt_dic['wd'].asfreq(dt_freq)[::['sep']]
+		dt_ws, dt_wd = dt_dic['ws'].asfreq(dt_freq)[::setting['sep']], dt_dic['wd'].asfreq(dt_freq)[::setting['sep']]
 		
 		dt_ws[dt_ws.keys()[-1]].replace(0.,n.nan,inplace=True)
 		dt_wd[dt_ws.keys()[-1]].replace(0.,n.nan,inplace=True)
@@ -109,15 +112,19 @@ def plot_all(dt_dic,fig_path='.',dt_freq='30T',tick_freq='5h'):
 
 		_u, _v = wswd2uv(1.,dt_wd)
 
-		# breakpoint()
+		height = n.array(list(dt_ws.keys())).astype(float)
+		h_diff = n.diff(height)/2.
+		h_diff = n.append(h_diff,h_diff[-1])
+		height += h_diff
 
-		x_tick = dt_ws.asfreq(freq).index
+		x_tick = dt_ws.asfreq(tick_freq).index
 		x_tick_lab = x_tick.strftime('%Y-%m-%d%n%X')
 
 		## plot quiver with cmap, same length quiverssss
 		fig, ax = subplots(figsize=(12,6),dpi=150.)
 
-		qv = ax.quiver(_u.index,_u.keys(),_u.T,_v.T,dt_ws.T,cmap='jet',scale=50.)
+		qv = ax.quiver(_u.index,height,_u.T,_v.T,dt_ws.T.values,
+					   cmap='jet',scale=50.,clim=(setting['vmin'],setting['vmax']))
 
 		box = ax.get_position()
 		ax.set_position([box.x0,box.y0+0.02,box.width,box.height])
@@ -145,11 +152,11 @@ def plot_all(dt_dic,fig_path='.',dt_freq='30T',tick_freq='5h'):
 
 
 	## plot
-	_plot_quiver()
+
 	
 	_plot_pcolor('ws')
 	_plot_pcolor('z_ws')
 
 
-
+	_plot_quiver()
 

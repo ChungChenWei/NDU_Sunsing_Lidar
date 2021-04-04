@@ -160,6 +160,7 @@ class reader:
 
 	def plot(self,fig_path='.',start=None,final=None,mean_freq=None,tick_freq='6h'):
 
+		## plot time series
 		## make picture dir
 		save_path = pth(fig_path,'WXT')
 		mkdir(save_path) if not exists(save_path) else None

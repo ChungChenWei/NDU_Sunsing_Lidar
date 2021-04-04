@@ -9,9 +9,9 @@ import sys
 from datetime import datetime as dtm
 from datetime import timedelta as dtmdt
 from os.path import join as pth
-# from lidar.dt_handle import *
-# from lidar.plot import plot
-from ground import *
+from lidar.dt_handle import *
+from lidar.plot import plot
+# from ground import *
 
 
 
@@ -22,32 +22,36 @@ def run():
 
 	
 	## NDU
-	# start_dtm = dtm(2020,11,20,0,0,0)
-	# final_dtm = dtm(2020,11,21,0,0,0)
-	# path = pth('..','data','test','Lidar_Sunsing_NDU_testdata')
-	# reader = NDU.reader(path,start_dtm,final_dtm,reset=False)
-	# dt = reader.get_data(mean_freq='10T')
+	# '''
+	start_dtm = dtm(2021,4,1,12,0,0)
+	final_dtm = dtm(2021,4,4,0,0,0)
+	path = pth('..','data','Lidar_NDU','use')
+	reader = NDU.reader(path,start_dtm,final_dtm,reset=False)
+	dt = reader.get_data(dtm(2021,4,3),final_dtm,mean_freq='10T')
 
-	# plot.plot_all(dt,pth('..','picture'))
+	plot.plot_all(dt,pth('..','picture'))
+	# '''
+
 
 	## SSC
-	# start_dtm = dtm(2021,4,1,14,30,0)
-	# final_dtm = dtm(2021,4,3)
-	# path = pth('..','data','Lidar_SSC')
-	# reader = SSC.reader(path,start_dtm,final_dtm,reset=False)
-	# dt = reader.get_data()
+	# '''
+	start_dtm = dtm(2021,4,3)
+	final_dtm = dtm(2021,4,4)
+	path = pth('..','data','Lidar_SSC')
+	reader = SSC.reader(path,start_dtm,final_dtm,reset=False)
+	dt = reader.get_data()
 
-	# plot.plot_all(dt,pth('..','picture'))
-
+	plot.plot_all(dt,pth('..','picture'))
+	# '''
 
 	## RCEC
 	# start_dtm = dtm(2021,4,1)
-	# final_dtm = dtm(2021,4,3)
+	# final_dtm = dtm(2021,4,4)
 	# path = pth('..','data','Lidar_RCEC')
 	# reader = RCEC.reader(path,start_dtm,final_dtm,reset=False)
-	# dt = reader.get_data(dtm(2021,4,1,18),dtm(2021,4,2,18))
+	# dt = reader.get_data(dtm(2021,4,3),final_dtm)
 
-	# plot.plot_all(dt,pth('..','picture'),freq='1h')
+	# plot.plot_all(dt,pth('..','picture'),dt_freq='1h')
 
 	## GRIMM
 	# start_dtm = dtm(2021,4,1)
@@ -58,13 +62,13 @@ def run():
 
 
 	## WXT
-	start_dtm = dtm(2021,4,1)
-	final_dtm = dtm(2021,4,4)
-	path = pth('..','data','WXT')
-	wxt = WXT.reader(path,start_dtm,final_dtm,reset=False)
+	# start_dtm = dtm(2021,4,1)
+	# final_dtm = dtm(2021,4,4)
+	# path = pth('..','data','WXT')
+	# wxt = WXT.reader(path,start_dtm,final_dtm,reset=False)
 	# dt = wxt.get_data()
 
-	dt = wxt.plot(pth('..','picture'),tick_freq='12h',mean_freq='1h')
+	# dt = wxt.plot(pth('..','picture'),tick_freq='12h',mean_freq='1h')
 
 	return dt
 

@@ -12,6 +12,9 @@ from metpy.units import units
 
 import matplotlib.pyplot   as plt
 import matplotlib.gridspec as gs
+from matplotlib import cm
+from matplotlib.colors import ListedColormap, LinearSegmentedColormap
+
 import shapefile
 from descartes import PolygonPatch
 
@@ -150,9 +153,9 @@ class sounding:
 
 class RS41reader(sounding):
     def __init__(self, release_time, path=Path('.'), metaPath=Path('.')):
-        super().__init__(path=path)
+        super().__init__(path=path,  metaFilePath=metaPath / 'metadata.json')
         self.release_time = dtmdtm.strptime(release_time,"%Y%m%d_%H%M")
-        self.meta = metadataReader(metaPath / 'metadata.json')["radio"]["RS41"]
+        self.soundingMeta = self.meta["radio"]["RS41"]
 
     def read(self):
         no_file   = self.path / f"edt2_{self.release_time.strftime('%Y%m%d_%H%M')}.txt"
@@ -169,18 +172,18 @@ class RS41reader(sounding):
         fig  = plt.figure(figsize=(12, 12))
 
         # fig.subplots_adjust(top = 0.9, bottom = 0.1, left = 0.05, right = 0.96, wspace = 0.08, hspace = 0.25)
-
-        skew = SkewT(fig, subplot=grid[:, :], rotation=45)
+        # skew = SkewT(fig, subplot=grid[:, :], rotation=45)
+        skew = SkewT(fig, rotation=45)
         
         self.plotter(skew)
 
         ## UTC
         UTC = self.release_time.hour
 
-        fig.text(0.55,0.89,f"{self.release_time} LST",fontsize=fs-6)
-        skew.ax.set_title(f"Skew-T Log-P Diagram RS41 {UTC:02d} UTC\n", fontsize=fs)
+        fig.text(0.55,0.89,f"{self.release_time+dtmdt(hours=8)} LST",fontsize=self.fs-6)
+        skew.ax.set_title(f"Skew-T Log-P Diagram RS41 {UTC:02d} UTC\n", fontsize=self.fs)
     
-        plt.savefig(picPath / (f"{self.release_time.strftime('%Y%m%d')}_{UTC}Z_{self.release_time.strftime('%Y%m%d_%H%M')}.png"))
+        plt.savefig(picPath / (f"{self.release_time.strftime('%Y%m%d')}_{UTC:02d}Z_{(self.release_time+dtmdt(hours=8)).strftime('%Y%m%d_%H%M')}.png"))
         if(showmode == True):
             plt.show()
 
@@ -209,7 +212,8 @@ class STreader(sounding):
         grid = gs.GridSpec(3,3)
         fig  = plt.figure(figsize=(12, 12))
         # fig.subplots_adjust(top = 0.9, bottom = 0.1, left = 0.05, right = 0.96, wspace = 0.08, hspace = 0.25)
-        skew = SkewT(fig, subplot=grid[:, :2], rotation=45)
+        # skew = SkewT(fig, subplot=grid[:, :2], rotation=45)
+        skew = SkewT(fig, rotation=45)
         
         self.plotter(skew)
 
@@ -223,33 +227,33 @@ class STreader(sounding):
 
         fig.text(0.55,0.89,f"no_{self.no} {self.release_time} LST",fontsize=self.fs-6)
         skew.ax.set_title(f"Skew-T Log-P Diagram Storm tracker {title} {UTC:02d} UTC\n")
-        # if(savemode == True):
-        #     plt.savefig(picPath / (f"{title}_{UTC}Z_{self.release_time.strftime('%Y%m%d_%H%M')}_no{self.no}.png"))
-        # if(showmode == True):
-        #     plt.show()
+        if(savemode == True):
+            plt.savefig(picPath / (f"{title}_{UTC:02d}Z_{self.release_time.strftime('%Y%m%d_%H%M')}_no{self.no}.png"))
+        if(showmode == True):
+            plt.show()
 
 
-        ax2 = fig.add_subplot(grid[0, 2])
-        [ax2.add_patch(PolygonPatch(shape, fc= 'none')) for shape in shapes]
-        ax2.scatter(self.sounding['Lon'][10:], self.sounding['Lat'][10:], c = 'r', s = 10)
-        ax2.tick_params(labelsize = 15.)
-        lonl = 120.
-        lonr = 121.
-        latl = 23.
-        latr = 23.5
-        ax2.set_xticks(np.arange(lonl, lonr, 0.5))
-        ax2.set_yticks(np.arange(latl, latr, 0.5))
-        # ax2.set_xticklabels(['', '120°E', '', '121°E', ''])
-        # ax2.set_yticklabels(['22°N', '', '23°N', '', '24°N'])
-        ax2.set_xlim([lonl, lonr])
-        ax2.set_ylim([latl, latr])
-        ax2.grid(linestyle = '--')
-        ax2.set_title('Trajectory', fontsize = self.fs)
-        ax2.set_xlabel('longitude',  fontsize = self.fs-4)
-        ax2.set_ylabel('latitude', fontsize = self.fs-4)
+        # ax2 = fig.add_subplot(grid[0, 2])
+        # [ax2.add_patch(PolygonPatch(shape, fc= 'none')) for shape in shapes]
+        # ax2.scatter(self.sounding['Lon'][10:], self.sounding['Lat'][10:], c = 'r', s = 10)
+        # ax2.tick_params(labelsize = 15.)
+        # lonl = 120.
+        # lonr = 121.
+        # latl = 23.
+        # latr = 23.5
+        # ax2.set_xticks(np.arange(lonl, lonr, 0.5))
+        # ax2.set_yticks(np.arange(latl, latr, 0.5))
+        # # ax2.set_xticklabels(['', '120°E', '', '121°E', ''])
+        # # ax2.set_yticklabels(['22°N', '', '23°N', '', '24°N'])
+        # ax2.set_xlim([lonl, lonr])
+        # ax2.set_ylim([latl, latr])
+        # ax2.grid(linestyle = '--')
+        # ax2.set_title('Trajectory', fontsize = self.fs)
+        # ax2.set_xlabel('longitude',  fontsize = self.fs-4)
+        # ax2.set_ylabel('latitude', fontsize = self.fs-4)
 
-        plt.savefig(picPath / (f"{title}_{UTC}Z_{self.release_time.strftime('%Y%m%d_%H%M')}_no{self.no}_tj.png"))
-        plt.show()
+        # plt.savefig(picPath / (f"{title}_{UTC}Z_{self.release_time.strftime('%Y%m%d_%H%M')}_no{self.no}_tj.png"))
+        # plt.show()
 
 if __name__ == '__main__':
     import logging
@@ -271,9 +275,83 @@ if __name__ == '__main__':
     with open('RSlaunchdata.json') as js:
         RSlaunch = load(js)["launch"]
         
-    mode = "DEBUG"
-    # mode = "ST"
-    if(mode!="DEBUG"):
+    # mode = "DEBUG"
+    mode = "STMUL"
+    if(mode=="DEBUG"):
+        stID = 401
+        st = STreader(stID, launch[f"{stID}"], Path('../../data/ST'))
+        st.plot(Path('../../picture/ST'), showmode=True, savemode=False)
+        # rs = RS41reader('20210401_1500',Path('../../data/RS41/202104_TNNUA_NTU'))
+        # rs.plot(Path('../../picture/RS41'))
+    elif(mode=="STMUL"):
+        fig  = plt.figure(figsize=(12, 12),constrained_layout=True)
+        # skew = SkewT(fig, rotation=0, aspect=100)
+
+        linestyle = metadataReader('metadata.json')['skewT']["linestyle"]
+        boundary  = metadataReader('metadata.json')['skewT']["boundary"]
+        fs = 16
+        
+        # skew.ax.set_xlabel('[$\degree C$]', fontsize = fs)
+        # skew.ax.set_ylabel('[$hPa$]',       fontsize = fs)
+
+        # for i in np.arange(boundary["T"][0], boundary["T"][1], boundary["T"][2]*2):
+        #     plt.fill_between(range(i, i+boundary["T"][2]+1), boundary["P"][0], boundary["P"][1], color = 'yellow', alpha=0.7)
+        
+        ### wind bar
+        # idx  = mcalc.resample_nn_1d(P.m, np.array([1000, 975, 950, 925, 900, 850, 800, 750, 700, 650, 600, 500]))
+        # skew.plot_barbs(P[idx], U[idx], V[idx], plot_units = units('knots'), xloc=1.05)
+        # skip=self.plotMeta["wind"]["skip"]
+        # skew.plot_barbs(P[P.m>=100][::skip], U[P.m>=100][::skip], V[P.m>=100][::skip], plot_units = units('m/s'), xloc=1.05)
+
+        # skew.plot(LCL_P, LCL_T, 'ko', markerfacecolor='black')
+        # skew.plot(profP, parcel_prof, 'k', linewidth=2)
+
+        # noL  = list(launch.keys())[-8:]
+        noL    = list(launch.keys())[-12:]
+        # colorL = ['r','o','y','g','b','p','k','']
+        cmap   = cm.get_cmap('rainbow', 10)
+        colorL = cmap(range(10))
+        i      = 0
+        for no in noL:
+            time = dtmdtm.strptime(launch[f"{no}"],"%Y/%m/%d %H:%M:%S")
+            print(no, time) 
+            st = STreader(no, launch[f"{no}"], Path('../../data/ST'))
+            try:
+
+                P, T, Td, U, V = st.read()
+                Theta   = mcalc.potential_temperature(P,T).to('K')
+                print(Theta)
+                Thetae  = mcalc.equivalent_potential_temperature(P,T,Td).to('K')
+
+                ## UTC
+                UTC = max((time + dtmdt(minutes=25)).hour, (time - dtmdt(minutes=25)).hour) - 8
+                LST = max((time + dtmdt(minutes=25)).hour, (time - dtmdt(minutes=25)).hour)
+                if(UTC < 0):
+                    UTC += 24
+                    title = (time - dtmdt(days=1)).strftime('%m%d')
+                else:
+                    title = time.strftime('%m%d')
+
+
+                ## main data
+                plt.plot(Thetae, P,color=colorL[i] , linewidth=2, label=f"{title} {UTC:02d}Z ({LST:02d} LST)")
+                i += 1
+                # skew.plot(P, Td, 'r')
+
+            except:
+                print('err')
+        plt.ylim(1000, 500)
+        plt.xlim(300,  400)
+        plt.title("Thetae", fontsize=20)
+        plt.xlabel('K')
+        plt.ylabel('hPa')
+        plt.legend()
+        plt.grid()
+        plt.savefig("STMUL_Thetae.png")
+        plt.show()
+
+                       
+    else:
         if(mode == "ST"):
             for no, time in launch.items():
                 try:
@@ -288,9 +366,4 @@ if __name__ == '__main__':
                     rs.plot(Path('../../picture/RS41'))
                 except:
                     logger.warning(f"{time} fail", exc_info=True)
-    else:
-        stID = 401
-        st = STreader(stID, launch[f"{stID}"], Path('../../data/ST'))
-        st.plot(Path('../../picture/ST'), showmode=True, savemode=False)
-        # rs = RS41reader('20210401_1500',Path('../../data/RS41/202104_TNNUA_NTU'))
-        # rs.plot(Path('../../picture/RS41'))
+       

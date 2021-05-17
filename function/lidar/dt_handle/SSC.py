@@ -41,5 +41,3 @@ class reader(lidar_reader):
 
 
 
-
-

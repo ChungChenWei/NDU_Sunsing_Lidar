@@ -36,13 +36,12 @@ with open(pth(cur_file_path,'metadata.json'),'r') as f:
 
 
 ## plot all variable
-def plot_all(dt_dic,fig_path='.',dt_freq='30T',tick_freq='6h'):
+def plot_all(dt_dic,fig_path='.',tick_freq='6h'):
 
 
 
 	## parameter
 	dt_nam = dt_dic['nam'].split('_')[0]
-	meta = meta_dt[dt_nam]
 	_ind = dt_dic['ws'].index
 	print(f'\nPlot {dt_nam} data')
 
@@ -50,11 +49,18 @@ def plot_all(dt_dic,fig_path='.',dt_freq='30T',tick_freq='6h'):
 	dir_path = pth(fig_path,dt_nam)
 	mkdir(dir_path) if not exists(dir_path) else None
 
-	save_path = pth(dir_path,f'{_ind[0].strftime("%Y-%m-%d %H")}_{_ind[-1].strftime("%Y-%m-%d %H")}')
-	mkdir(save_path) if not exists(save_path) else None
+	save_path = {}
+	save_path[dt_nam] = pth(dir_path,f'{_ind[0].strftime("%Y-%m-%d %H")}_{_ind[-1].strftime("%Y-%m-%d %H")}')
+	mkdir(save_path[dt_nam]) if not exists(save_path[dt_nam]) else None
 
+
+
+	mkdir(pth(fig_path,'lidar_comp')) if not exists(pth(fig_path,'lidar_comp')) else None
+	save_path['comp'] = pth(fig_path,'lidar_comp',f'{_ind[0].strftime("%Y-%m-%d %H")}_{_ind[-1].strftime("%Y-%m-%d %H")}')
+	mkdir(save_path['comp']) if not exists(save_path['comp']) else None
 
 	## function
+	meta = meta_dt[dt_nam]
 	def _plot_pcolor(_nam,_cmap):
 		print(f'\tplot {dt_nam} : {_nam}')
 
@@ -103,8 +109,8 @@ def plot_all(dt_dic,fig_path='.',dt_freq='30T',tick_freq='6h'):
 
 
 
-
-	def _plot_quiver(fig,ax,fs,box):
+	## plot quiver and vertical wind
+	def _plot_quiver(fig,ax,fs,box,meta):
 
 		## parameter
 		def wswd2uv(_ws,_wd):
@@ -117,7 +123,8 @@ def plot_all(dt_dic,fig_path='.',dt_freq='30T',tick_freq='6h'):
 
 
 		setting = meta['quiver']
-		dt_ws, dt_wd = dt_dic['ws'].asfreq(dt_freq)[::setting['sep']], dt_dic['wd'].asfreq(dt_freq)[::setting['sep']]
+		# dt_ws, dt_wd = dt_dic['ws'].asfreq(dt_freq)[::setting['sep']], dt_dic['wd'].asfreq(dt_freq)[::setting['sep']]
+		dt_ws, dt_wd = dt_dic['ws'].asfreq(setting['dt_freq']), dt_dic['wd'].asfreq(setting['dt_freq'])
 		
 		dt_ws[dt_ws.keys()[-1]].replace(0.,n.nan,inplace=True)
 		dt_wd[dt_ws.keys()[-1]].replace(0.,n.nan,inplace=True)
@@ -145,15 +152,8 @@ def plot_all(dt_dic,fig_path='.',dt_freq='30T',tick_freq='6h'):
 
 		return x_tick, dt_ws.index[0], dt_ws.index[-1]
 
-
-
-
-
-
-
-
 	## plot z_ws pcolormesh
-	def _plot_z_ws(fig,ax,fs,box):
+	def _plot_z_ws(fig,ax,fs,box,meta):
 
 		## parameter
 		setting = meta['z_ws']
@@ -184,14 +184,9 @@ def plot_all(dt_dic,fig_path='.',dt_freq='30T',tick_freq='6h'):
 	
 		cb.ax.set_title(setting['cb_label'],fontsize=fs-2.)
 
-
-
-
-
-
-	def _plot():
+	def _plot(meta_nam):
 		## plot quiver and plot z_ws
-
+		meta = meta_dt[meta_nam]
 
 		## parameter
 		fs = 15.
@@ -204,9 +199,9 @@ def plot_all(dt_dic,fig_path='.',dt_freq='30T',tick_freq='6h'):
 		ax.set_position([box.x0,box.y0+0.05,box.width,box.height])
 
 		## z_ws
-		_plot_z_ws(fig,ax,fs,ax.get_position())
+		_plot_z_ws(fig,ax,fs,ax.get_position(),meta)
 		## quiver
-		x_tick, _st, _fn = _plot_quiver(fig,ax,fs,ax.get_position())
+		x_tick, _st, _fn = _plot_quiver(fig,ax,fs,ax.get_position(),meta)
 
 		## other figure setting
 		ax.tick_params(which='major',length=6.,labelsize=fs-2.)
@@ -218,19 +213,15 @@ def plot_all(dt_dic,fig_path='.',dt_freq='30T',tick_freq='6h'):
 		# ax.set_xlabel('Time',fontsize=fs)
 		ax.set_ylabel('Height (m)',fontsize=fs)
 		
-		fig.suptitle(f'{dt_nam.upper()} data : wind speed and Wind direction',fontsize=fs+2.,style='italic')
+		fig.suptitle(f'{dt_nam.upper()} lidar wind profile (every {setting["dt_freq"].replace("T"," min")}) ',fontsize=fs+2.,style='italic')
 
-
-		fig.savefig(pth(save_path,f'{dt_nam}_wswd_{_st.strftime("%Y%m%d%H%M")}-{_fn.strftime("%Y%m%d%H%M")}.png'))
+		fig.savefig(pth(save_path[meta_nam],f'{dt_nam}_wswd_{_st.strftime("%Y%m%d%H%M")}-{_fn.strftime("%Y%m%d%H%M")}.png'))
 
 
 	## plot
-	## colormap
-
-
-	
 	# _plot_pcolor('ws','jet')
 	# _plot_pcolor('z_ws',cmap)
 
-	_plot()
+	_plot('comp')
+	_plot(dt_nam)
 

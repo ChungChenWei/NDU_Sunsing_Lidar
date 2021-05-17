@@ -106,7 +106,7 @@ class lidar_reader:
 				_df_con = concat([_df_con,_df]) if _df_con is not None else _df
 
 		## concat the concated list
-		df = self.__raw_process(_df_con,dt_freq)		
+		df = self.__raw_process(_df_con,dt_freq)
 		print()
 
 		##=================================================================================================================

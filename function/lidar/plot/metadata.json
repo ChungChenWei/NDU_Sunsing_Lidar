@@ -23,10 +23,11 @@
 							},
 
 				"quiver" : {
+							"dt_freq"  : "30T",
 							"vmin" 	   : 0.1,
 							"vmax" 	   : 10,
 							"ylim_bot" : 0,
-							"ylim_top" : 450,
+							"ylim_top" : 1100,
 							"sep"	   : 1,
 							"cb_label" : "Wind Speed (m/s)" 
 							}
@@ -51,6 +52,7 @@
 							},
 
 				"quiver" : {
+							"dt_freq"  : "30T",
 							"vmin" 	   : 0.1,
 							"vmax" 	   : 10,
 							"ylim_bot" : 0,
@@ -78,6 +80,7 @@
 							},
 
 				"quiver" : {
+							"dt_freq"  : "30T",
 							"vmin" 	   : 0.1,
 							"vmax" 	   : 10,
 							"ylim_bot" : 0,
@@ -105,11 +108,30 @@
 							},
 
 				"quiver" : {
+							"dt_freq"  : "30T",
 							"vmin" 	   : 0.1,
 							"vmax" 	   : 10,
 							"ylim_bot" : 0,
 							"ylim_top" : 450,
 							"sep"	   : 1,
+							"cb_label" : "Wind Speed (m/s)" 
+							}
+			},
+
+	"comp" : { 
+				"z_ws"   : {
+							"vmin" 	   : -3,
+							"vmax" 	   : 3,
+							"cb_label" : "Vertical Wind Speed (m/s)" 
+							},
+
+				"quiver" : {
+							"dt_freq"  : "30T",
+							"vmin" 	   : 0.1,
+							"vmax" 	   : 10,
+							"ylim_bot" : 0,
+							"ylim_top" : 300,
+							"sep"	   : 5,
 							"cb_label" : "Wind Speed (m/s)" 
 							}
 			}

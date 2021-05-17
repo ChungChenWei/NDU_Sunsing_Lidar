@@ -24,7 +24,7 @@ class reader(lidar_reader):
 			try:
 				## lidar calibrate for 1 min after start the lidar
 				_df = read_csv(f,skiprows=1,parse_dates=['Time'],na_values=[99.9,999.9],
-							   date_parser=lambda _: dtm.strptime(_,'%Y%m%d_%X.%f')).set_index('Time').resample('10s').mean()
+							   date_parser=lambda _: dtm.strptime(_,'%Y%m%d_%X.%f')).set_index('Time').resample('5T').mean()
 
 				if _file[-8:-4] != '0000': _df.drop(_df.index[0:60],inplace=True)
 				# _flist.append(_df)

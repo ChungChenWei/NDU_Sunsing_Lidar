@@ -3,8 +3,10 @@ from pathlib import Path
 from pandas  import read_csv, read_table
 from pandas  import DataFrame
 from metpy.units  import units
-
 from metpy.calc import dewpoint_from_relative_humidity, wind_components
+
+from multiprocessing import Pool
+
 import numpy as np
 import logging
 FORMAT = '[*] %(asctime)s [%(levelname)s] %(module)s: %(message)s'
@@ -45,9 +47,9 @@ class sounding:
         U_released, V_released = wind_components(WS_released * units(f'{self.soundingMeta["WS"]["unit"]}'), WD_released * units.degrees)
 
         # T, P, T, TD, U, V
-        data      = np.asarray([P_released,T_released,TD_released,RH_released,U_released.to('m/s').m,V_released.to('m/s').m])
-        dataFrame = DataFrame(np.transpose(data),index=Time_released,columns=['P [hPa]','T [degC]','TD [degC]','RH [%]','U [m/s]','V [m/s]'])
-        return dataFrame, {'P [hPa]':"hPa", 'T [degC]':"degC", 'TD [degC]':"degC", 'RH [%]':"percent", 'U [m/s]':'m/s', 'V [m/s]':'m/s'}
+        data      = np.asarray([P_released,T_released,Z_released,TD_released,RH_released,U_released.to('m/s').m,V_released.to('m/s').m])
+        dataFrame = DataFrame(np.transpose(data),index=Time_released,columns=['P [hPa]','T [degC]','Z [m]','TD [degC]','RH [%]','U [m/s]','V [m/s]'])
+        return dataFrame, {'P [hPa]':"hPa", 'T [degC]':"degC", 'Z [m]':'m', 'TD [degC]':"degC", 'RH [%]':"percent", 'U [m/s]':'m/s', 'V [m/s]':'m/s'}
         # return dataFrame, {'P [hPa]':units.hPa, 'T [degC]':units.degC, 'TD [degC]':units.degC, 'U [m/s]':units('m/s'), 'V [m/s]':units('m/s')}
         # return Time_released, P_released * units.hPa, T_released * units.degreeC, TD_released * units.degreeC, U_released, V_released
 

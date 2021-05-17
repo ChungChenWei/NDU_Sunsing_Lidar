@@ -114,11 +114,16 @@ class lidar_reader:
 		## use dictionary to store data
 		fout = {}
 		for col, nam in zip(col_nam,out_nam):
-			fout[nam] = df[[ eval(col_fun)(h,col) for h in height ]].copy()
+			_df = df[[ eval(col_fun)(h,col) for h in height ]].copy()
 
-			fout[nam].columns = array([0]+height[:-1]).astype(int)
+			_df.columns = array(height).astype(int)
+			_df[0] = 0
 
-			fout[nam][int(height[-1])] = 0
+			fout[nam] = _df[array([0]+height).astype(int)]
+
+
+
+
 
 
 

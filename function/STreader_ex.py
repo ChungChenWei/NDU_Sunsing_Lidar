@@ -13,12 +13,12 @@ logging.basicConfig(
 )
 logger = logging.getLogger('__main__')
 
-DATA_ROOT = Path('..') / "0401_ObservationData"
+DATA_ROOT = Path('..') / "data"
 ST_DATA   = DATA_ROOT  / "storm tracker"
 METADATA  = Path('.')  / "radio"
 
 def readSTLaunchMetaData():
-	ST_RootPath = Path('..') / "0401_ObservationData" / "storm tracker"
+	ST_RootPath = Path('..') / "data" / "storm tracker"
 	ST_launchMetaDataFileName = "20210401_20210406.csv"
 	ST_rename = {"NO.":"no", "Time (yyyy/mm/dd HH:MM:SS)":"time"}
 

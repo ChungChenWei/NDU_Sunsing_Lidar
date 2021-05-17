@@ -12,7 +12,26 @@ vc_test.py
 
 
 
+#================#
+
+# yrr's Zone #
+
+#================#
+## yrr's Data
+data
+
+## yrr's Picture
+picture
+
+## yrr's test
+yrr_test.py
+#================#
+
+
+
+#----------------#
+# not important
 *.pyc
 
-yrr_test.py
-data
+#----------------#
+

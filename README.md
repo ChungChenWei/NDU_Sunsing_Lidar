@@ -1,9 +1,7 @@
-# NDU_Sunsing_Lidar
-This is for analyzing the lidar from National Defense University which will be used in the course of NTU-AS 2021 Field Measurement of Atmospheric Environment II
+# 大氣觀測實作（二）- 晚班組
+NTU-AS 2021 Field Measurement of Atmospheric Environment II
 
-[NDU Lidar SOP hackmd](https://hackmd.io/rlmIsb0UQCqlHdhiee7wYg)
+<p align=right>b07209010 大氣三 張俊杰<br> b07209016 大氣三 鐘晨瑋<br> b06209005 大氣四 黃銘豪<br> b06209043 大氣四 蘇奕翰 </p>
 
-
-test
-
+[google slide](https://docs.google.com/presentation/d/16ApwIgpnxEMQX8Bt_03MoKLwIi0G6aM7XlVrS7E38tM/edit?usp=sharing)
 

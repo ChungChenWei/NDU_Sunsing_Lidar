@@ -40,25 +40,29 @@ with open(pth(cur_file_path,'metadata.json'),'r') as f:
 ## read pickle file if it exisits, else read raw data and dump the pickle file
 class lidar_reader:
 
+	## parameter
+	nam = None
+
 	## initial setting
 	## input path and start time, final time
 	## because the pickle file will be generated after read raw data first time, 
 	## if want to reread the rawdata, please set 'reser=True'
-	def __init__(self,_path,_sta,_fin,_nam,_reset=False):
-		print(f'\n{_nam} lidar')
+	def __init__(self,_path,_sta=None,_fin=None,reset=False):
+		print(f'\n{self.nam} lidar')
 		print('='*65)
 		print(f"Reading file and process data")
+
+		if (_sta is None)&(reset): raise ValueError('\n\n\33[91mYou should input start time and final time if "reset = True"\33[0m')
 
 		## class parameter
 		self.index = lambda _freq: date_range(_sta,_fin,freq=_freq)
 		self.path  = _path
-		self.reset = _reset
-		self.meta  = meta_dt['lidar'][_nam]
-		self.nam   = _nam
-		self.pkl_nam = f'{_nam.lower()}.pkl'
+		self.reset = reset
+		self.meta  = meta_dt['lidar'][self.nam]
+		self.pkl_nam = f'{self.nam.lower()}.pkl'
 		self.__time  = (_sta,_fin)
 		
-		print(f" from {_sta.strftime('%Y-%m-%d %X')} to {_fin.strftime('%Y-%m-%d %X')}")
+		# print(f" from {_sta.strftime('%Y-%m-%d %X')} to {_fin.strftime('%Y-%m-%d %X')}")
 		print('='*65)
 		print(f"{dtm.now().strftime('%m/%d %X')}")
 
@@ -67,10 +71,10 @@ class lidar_reader:
 		## read one file
 		return None
 
-	def __raw_process(self,_flist,_freq):
+	def __raw_process(self,_df,_freq):
 		## customize each instrument
 		# breakpoint()
-		out = concat(_flist).resample(_freq).mean().reindex(self.index(_freq))
+		out = _df.resample(_freq).mean().reindex(self.index(_freq))
 		return out
 
 	## read raw data
@@ -90,17 +94,20 @@ class lidar_reader:
 		ext_nam, dt_freq, height, col_fun, col_nam, out_nam, oth_col = self.meta.values()
 
 		## read raw data
-		f_list = []
+		_df_con = None
+		
 		for file in listdir(self.path):
 			if ext_nam not in file.lower(): continue
 			print(f"\r\t\treading {file}",end='')
 
-			f_list = self.__raw_reader(f_list,file)
+			_df = self.__raw_reader(file)
+
+			if _df is not None:
+				_df_con = concat([_df_con,_df]) if _df_con is not None else _df
+
+		## concat the concated list
+		df = self.__raw_process(_df_con,dt_freq)		
 		print()
-
-		df = self.__raw_process(f_list,dt_freq)
-
-		
 
 		##=================================================================================================================
 		## classify data
@@ -108,8 +115,6 @@ class lidar_reader:
 		fout = {}
 		for col, nam in zip(col_nam,out_nam):
 			fout[nam] = df[[ eval(col_fun)(h,col) for h in height ]].copy()
-		
-			# print(456)
 
 			fout[nam].columns = array([0]+height[:-1]).astype(int)
 
@@ -132,13 +137,20 @@ class lidar_reader:
 	## get process data
 	def get_data(self,start=None,final=None,mean_freq=None):
 
+
+
+
 		## get dataframe data and process to wanted time range
 		_freq = mean_freq if mean_freq is not None else self.meta['freq']
 		self.__time = (start,final) if start is not None else self.__time
 
 		_out = {}
 		for _nam, _val in self.__reader().items():
-			_out[_nam] = _val.loc[self.__time[0]:self.__time[-1]].resample(_freq).mean()
+
+			if ('ws' in _nam)|('wd' in _nam):
+				_out[_nam] = _val.resample(self.meta['freq']).mean().asfreq(_freq).reindex(date_range(self.__time[0],self.__time[-1],freq=_freq))
+			else:
+				_out[_nam] = _val.resample(_freq).mean().reindex(date_range(self.__time[0],self.__time[-1],freq=_freq))
 
 		## add data name
 		_out['nam'] = f'{self.nam}_lidar'

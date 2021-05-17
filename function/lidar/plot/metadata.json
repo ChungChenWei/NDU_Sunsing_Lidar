@@ -10,21 +10,21 @@
 							"vmin" 	   : 0.1,
 							"vmax" 	   : 10,
 							"ylim_bot" : 0,
-							"ylim_top" : 2000,
+							"ylim_top" : 1500,
 							"cb_label" : "Wind Speed (m/s)" 
 							},
 
 				"z_ws"   : {
-							"vmin" 	   : 0.1,
+							"vmin" 	   : -3,
 							"vmax" 	   : 3,
 							"ylim_bot" : 0,
-							"ylim_top" : 2000,
-							"cb_label" : "Wind Speed (m/s)" 
+							"ylim_top" : 1500,
+							"cb_label" : "Vertical Wind Speed (m/s)" 
 							},
 
 				"quiver" : {
 							"vmin" 	   : 0.1,
-							"vmax" 	   : 15,
+							"vmax" 	   : 10,
 							"ylim_bot" : 0,
 							"ylim_top" : 450,
 							"sep"	   : 1,
@@ -36,23 +36,23 @@
 	"SSC"  : {
 				"ws"     : {
 							"vmin" 	   : 0.1,
-							"vmax" 	   : 15,
-							"ylim_bot" : 0,
-							"ylim_top" : 450,
-							"cb_label" : "Wind Speed (m/s)" 
-							},
-
-				"z_ws"   : {
-							"vmin" 	   : 0.1,
 							"vmax" 	   : 10,
 							"ylim_bot" : 0,
 							"ylim_top" : 450,
 							"cb_label" : "Wind Speed (m/s)" 
 							},
 
+				"z_ws"   : {
+							"vmin" 	   : -3,
+							"vmax" 	   : 3,
+							"ylim_bot" : 0,
+							"ylim_top" : 450,
+							"cb_label" : "Vertical Wind Speed (m/s)" 
+							},
+
 				"quiver" : {
 							"vmin" 	   : 0.1,
-							"vmax" 	   : 15,
+							"vmax" 	   : 10,
 							"ylim_bot" : 0,
 							"ylim_top" : 450,
 							"sep"	   : 1,
@@ -70,23 +70,49 @@
 							},
 
 				"z_ws"   : {
-							"vmin" 	   : 0.1,
-							"vmax" 	   : 5,
+							"vmin" 	   : -3,
+							"vmax" 	   : 3,
 							"ylim_bot" : 0,
 							"ylim_top" : 2500,
-							"cb_label" : "Wind Speed (m/s)" 
+							"cb_label" : "Vertical Wind Speed (m/s)" 
 							},
 
 				"quiver" : {
 							"vmin" 	   : 0.1,
 							"vmax" 	   : 10,
 							"ylim_bot" : 0,
-							"ylim_top" : 2500,
+							"ylim_top" : 450,
 							"sep"	   : 5,
 							"cb_label" : "Wind Speed (m/s)" 
 							}
-			}
+			},
 
+	"TORI" : { 
+				"ws"     : {
+							"vmin" 	   : 0.1,
+							"vmax" 	   : 10,
+							"ylim_bot" : 0,
+							"ylim_top" : 2500,
+							"cb_label" : "Wind Speed (m/s)" 
+							},
+
+				"z_ws"   : {
+							"vmin" 	   : -3,
+							"vmax" 	   : 3,
+							"ylim_bot" : 0,
+							"ylim_top" : 2500,
+							"cb_label" : "Vertical Wind Speed (m/s)" 
+							},
+
+				"quiver" : {
+							"vmin" 	   : 0.1,
+							"vmax" 	   : 10,
+							"ylim_bot" : 0,
+							"ylim_top" : 450,
+							"sep"	   : 1,
+							"cb_label" : "Wind Speed (m/s)" 
+							}
+			}
 
 
 }

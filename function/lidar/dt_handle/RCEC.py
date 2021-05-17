@@ -14,12 +14,12 @@ from pandas import read_csv
 
 
 class reader(lidar_reader):
-	def __init__(self,_path,_sta,_fin,reset=False):
-		super().__init__(_path,_sta,_fin,_nam='RCEC',_reset=reset)
 
-	def _lidar_reader__raw_reader(self,_flist,_file):
+	nam = 'RCEC'
+
+	def _lidar_reader__raw_reader(self,_file):
 		with open(pth(self.path,_file),'r',encoding='utf-8',errors='ignore') as f:
 
-			_flist.append(read_csv(f,skiprows=1,parse_dates=['Date_time'],na_values=[99.9,999],
-								   date_parser=lambda _: dtm.strptime(_,'%Y%m%d %X')).set_index('Date_time').resample('5T').mean())
-		return _flist
+			_df = read_csv(f,skiprows=1,parse_dates=['Date_time'],na_values=[99.9,999],
+								   date_parser=lambda _: dtm.strptime(_,'%Y%m%d %X')).set_index('Date_time').resample('5T').mean()
+		return _df

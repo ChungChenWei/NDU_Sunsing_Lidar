@@ -16,14 +16,14 @@ from pandas import read_table
 
 
 class reader(lidar_reader):
-	def __init__(self,_path,_sta,_fin,reset=False):
-		super().__init__(_path,_sta,_fin,_nam='TORI',_reset=reset)
 
-	def _lidar_reader__raw_reader(self,_flist,_file):
+	nam = 'TORI'
+
+	def _lidar_reader__raw_reader(self,_file):
 		with open(pth(self.path,_file),'r',encoding='utf-8',errors='ignore') as f:
-			_flist.append(read_table(f,skiprows=41,parse_dates=['Timestamp (end of interval)']
-									 ).set_index('Timestamp (end of interval)').resample('1T').mean())
-		return _flist
+			_df = read_table(f,skiprows=41,parse_dates=['Timestamp (end of interval)']
+									 ).set_index('Timestamp (end of interval)').resample('1T').mean()
+		return _df
 
 
 

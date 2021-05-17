@@ -16,10 +16,10 @@ from datetime import timedelta as dtmdt
 
 
 class reader(lidar_reader):
-	def __init__(self,_path,_sta,_fin,reset=False):
-		super().__init__(_path,_sta,_fin,_nam='SSC',_reset=reset)
 
-	def _lidar_reader__raw_reader(self,_flist,_file):
+	nam = 'SSC'
+
+	def _lidar_reader__raw_reader(self,_file):
 		with open(pth(self.path,_file),'r',encoding='utf-8',errors='ignore') as f:
 
 			_temp = read_csv(f,skiprows=1)
@@ -36,11 +36,8 @@ class reader(lidar_reader):
 					break
 
 			_temp['Time'] = _tm_list
-			
-			_flist.append(_temp.set_index('Time').resample('10T').mean())
-			
 
-		return _flist
+		return _temp.set_index('Time').resample('10T').mean()
 
 
 

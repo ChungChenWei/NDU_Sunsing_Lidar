@@ -33,7 +33,7 @@
 										"ylim_bot" : 16,
 										"ylim_top" : 37,
 										"ylabel"   : "Temp. ($^oC$)",
-										"title"    : "Dew point",
+										"title"    : "Temperature",
 										"color"    : "#ff4c4d"
 										},
 
@@ -41,7 +41,7 @@
 										"ylim_bot" : 16,
 										"ylim_top" : 22,
 										"ylabel"   : "Temp. ($^oC$)",
-										"title"    : "Temperature",
+										"title"    : "Dew point",
 										"color"    : "#00bfff"
 										},
 
@@ -54,9 +54,21 @@
 										}
 							}
 
+				},
+
+	"GRIMM" : {
+
+				"vmin"   : 0.0001,
+				"vmax" 	 : 70000000
+
+
+
+
+
+
+
+
 				}
-
-
 
 
 

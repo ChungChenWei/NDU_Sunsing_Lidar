@@ -150,7 +150,7 @@ class reader:
 		_freq = mean_freq if mean_freq is not None else '1T'
 		self.__time = (start,final) if start is not None else self.__time
 
-		_temp = self.__reader().reindex(date_range(self.__time[0],self.__time[-1],freq=mean_freq))
+		_temp = self.__reader().reindex(date_range(self.__time[0],self.__time[-1],freq=_freq))
 
 		_out  = _temp[['ws','wd','wd_std','u','v']].asfreq(_freq)
 		for _nam in ['T','RH','P','Td']: _out[_nam] = _temp[_nam].resample(_freq).mean()

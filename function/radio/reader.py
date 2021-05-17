@@ -1,10 +1,11 @@
 from json    import load
 from pathlib import Path
 from pandas  import read_csv, read_table
+from pandas  import DataFrame
 from metpy.units  import units
 
 from metpy.calc import dewpoint_from_relative_humidity, wind_components
-
+import numpy as np
 import logging
 FORMAT = '[*] %(asctime)s [%(levelname)s] %(module)s: %(message)s'
 DATEFORMAT = '%Y/%m/%d %H:%M:%S'
@@ -32,6 +33,7 @@ class sounding:
             return
 
         ## basic variables
+        Time_released = sounding[self.soundingMeta["Time"]]
         P_released    = sounding[self.soundingMeta["P"]][:].to_numpy(dtype=float)
         T_released    = sounding[self.soundingMeta["T"]["name"]][:].to_numpy(dtype=float)
         Z_released    = sounding[self.soundingMeta["Z"]][:].to_numpy(dtype=float)
@@ -42,7 +44,12 @@ class sounding:
         TD_released   = dewpoint_from_relative_humidity(T_released * units(f'{self.soundingMeta["T"]["unit"]}'), RH_released/100).m
         U_released, V_released = wind_components(WS_released * units(f'{self.soundingMeta["WS"]["unit"]}'), WD_released * units.degrees)
 
-        return P_released * units.hPa, T_released * units.degreeC, TD_released * units.degreeC, U_released, V_released
+        # T, P, T, TD, U, V
+        data      = np.asarray([P_released,T_released,TD_released,RH_released,U_released.to('m/s').m,V_released.to('m/s').m])
+        dataFrame = DataFrame(np.transpose(data),index=Time_released,columns=['P [hPa]','T [degC]','TD [degC]','RH [%]','U [m/s]','V [m/s]'])
+        return dataFrame, {'P [hPa]':"hPa", 'T [degC]':"degC", 'TD [degC]':"degC", 'RH [%]':"percent", 'U [m/s]':'m/s', 'V [m/s]':'m/s'}
+        # return dataFrame, {'P [hPa]':units.hPa, 'T [degC]':units.degC, 'TD [degC]':units.degC, 'U [m/s]':units('m/s'), 'V [m/s]':units('m/s')}
+        # return Time_released, P_released * units.hPa, T_released * units.degreeC, TD_released * units.degreeC, U_released, V_released
 
 
 class RS41reader(sounding):

@@ -1,7 +1,18 @@
-
-
-*.png
-*.pyc
+#================#
+# Vincent's Zone #
+#================#
+## Vincent's Data
+0401_ObservationData
+## Vincent's Picture
 picture
+## Vincent's main
+vc_test.py
+#----------------#
+
+
+
+
+*.pyc
+
 yrr_test.py
 data

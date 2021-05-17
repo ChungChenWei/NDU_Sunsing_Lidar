@@ -56,7 +56,7 @@
 							"vmin" 	   : 0.1,
 							"vmax" 	   : 10,
 							"ylim_bot" : 0,
-							"ylim_top" : 450,
+							"ylim_top" : 300,
 							"sep"	   : 1,
 							"cb_label" : "Wind Speed (m/s)" 
 							}
@@ -84,7 +84,7 @@
 							"vmin" 	   : 0.1,
 							"vmax" 	   : 10,
 							"ylim_bot" : 0,
-							"ylim_top" : 450,
+							"ylim_top" : 2500,
 							"sep"	   : 5,
 							"cb_label" : "Wind Speed (m/s)" 
 							}
@@ -112,7 +112,7 @@
 							"vmin" 	   : 0.1,
 							"vmax" 	   : 10,
 							"ylim_bot" : 0,
-							"ylim_top" : 450,
+							"ylim_top" : 300,
 							"sep"	   : 1,
 							"cb_label" : "Wind Speed (m/s)" 
 							}

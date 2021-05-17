@@ -137,9 +137,6 @@ class lidar_reader:
 	## get process data
 	def get_data(self,start=None,final=None,mean_freq=None):
 
-
-
-
 		## get dataframe data and process to wanted time range
 		_freq = mean_freq if mean_freq is not None else self.meta['freq']
 		self.__time = (start,final) if start is not None else self.__time

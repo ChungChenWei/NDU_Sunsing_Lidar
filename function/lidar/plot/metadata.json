@@ -127,8 +127,8 @@
 
 				"quiver" : {
 							"dt_freq"  : "30T",
-							"vmin" 	   : 0.1,
-							"vmax" 	   : 10,
+							"vmin" 	   : 2.5,
+							"vmax" 	   : 10.5,
 							"ylim_bot" : 0,
 							"ylim_top" : 350,
 							"sep"	   : 1,
@@ -147,7 +147,19 @@
 							},
 
 				"quiver" : {
-							"dt_freq"  : "30T",
+							"dt_freq"  : "1h",
+							"vmin" 	   : 2.5,
+							"vmax" 	   : 10.5,
+							"ylim_bot" : 0,
+							"ylim_top" : 1100,
+							"sep"	   : 1,
+							"cb_label" : "Wind Speed (m/s)" 
+							}
+			},
+
+	"ST"  : { 
+				"quiver" : {
+							"dt_freq"  : "1h",
 							"vmin" 	   : 2.5,
 							"vmax" 	   : 10.5,
 							"ylim_bot" : 0,

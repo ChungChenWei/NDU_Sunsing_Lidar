@@ -8,7 +8,6 @@ import matplotlib.colors as mc
 # rcParams['pcolor.shading'] = 'flat'
 
 import numpy as n
-np = n
 
 # from datetime import datetime as dtm
 from os import mkdir
@@ -37,7 +36,7 @@ with open(pth(cur_file_path,'metadata.json'),'r') as f:
 
 
 ## plot all variable
-def plot_all(dt_dic,fig_path='.',tick_freq='6h'):
+def plot_all(dt_dic,fig_path='.',tick_freq='6h',input_tick=None):
 
 
 
@@ -143,7 +142,7 @@ def plot_all(dt_dic,fig_path='.',tick_freq='6h'):
 		## get height as y axis and get x ticks
 		_u, _v = wswd2uv(1.5,dt_wd)
 		height = n.array(list(dt_ws.keys())).astype(float)
-		x_tick = dt_ws.asfreq(tick_freq).index
+		x_tick = input_tick if input_tick is not None else dt_ws.asfreq(tick_freq).index 
 
 		## plot
 		sc = ax.scatter(_index[_mask.T],_height[_mask.T],s=15,fc='None',ec='#666666',label='< 2.5 m/s')
@@ -182,7 +181,6 @@ def plot_all(dt_dic,fig_path='.',tick_freq='6h'):
 
 		## plot
 		## set z_ws as background and the colorbar is horizontal
-		# breakpoint()
 		pm = ax.pcolormesh(dt.index,dt.keys(),dt[1:].T[1:],cmap=cmap,vmin=setting['vmin'],vmax=setting['vmax'])
 
 		box = ax.get_position()
@@ -210,7 +208,7 @@ def plot_all(dt_dic,fig_path='.',tick_freq='6h'):
 		ax.set_position([box.x0,box.y0+0.05,box.width,box.height])
 
 		## z_ws
-		_plot_z_ws(fig,ax,fs,ax.get_position(),meta)
+		if 'z_ws' in dt_dic.keys(): _plot_z_ws(fig,ax,fs,ax.get_position(),meta)
 		## quiver
 		x_tick, _st, _fn = _plot_quiver(fig,ax,fs,ax.get_position(),meta)
 
@@ -233,6 +231,6 @@ def plot_all(dt_dic,fig_path='.',tick_freq='6h'):
 	# _plot_pcolor('ws','jet')
 	# _plot_pcolor('z_ws',cmap)
 
-	_plot('comp')
+	# _plot('comp')
 	_plot(dt_nam)
 

@@ -84,8 +84,8 @@
 							"vmin" 	   : 0.1,
 							"vmax" 	   : 10,
 							"ylim_bot" : 0,
-							"ylim_top" : 2500,
-							"sep"	   : 5,
+							"ylim_top" : 1000,
+							"sep"	   : 3,
 							"cb_label" : "Wind Speed (m/s)" 
 							}
 			},
@@ -127,16 +127,47 @@
 
 				"quiver" : {
 							"dt_freq"  : "30T",
-							"vmin" 	   : 0.1,
-							"vmax" 	   : 10,
+							"vmin" 	   : 2.5,
+							"vmax" 	   : 10.5,
 							"ylim_bot" : 0,
-							"ylim_top" : 300,
-							"sep"	   : 5,
+							"ylim_top" : 350,
+							"sep"	   : 1,
+							"cb_label" : "Wind Speed (m/s)" 
+							}
+			},
+
+	"inteNDU"  : { 
+
+				"z_ws"   : {
+							"vmin" 	   : -3,
+							"vmax" 	   : 3,
+							"ylim_bot" : 0,
+							"ylim_top" : 1500,
+							"cb_label" : "Vertical Wind Speed (m/s)" 
+							},
+
+				"quiver" : {
+							"dt_freq"  : "1h",
+							"vmin" 	   : 2.5,
+							"vmax" 	   : 10.5,
+							"ylim_bot" : 0,
+							"ylim_top" : 1100,
+							"sep"	   : 1,
+							"cb_label" : "Wind Speed (m/s)" 
+							}
+			},
+
+	"ST"  : { 
+				"quiver" : {
+							"dt_freq"  : "1h",
+							"vmin" 	   : 2.5,
+							"vmax" 	   : 10.5,
+							"ylim_bot" : 0,
+							"ylim_top" : 1100,
+							"sep"	   : 1,
 							"cb_label" : "Wind Speed (m/s)" 
 							}
 			}
-
-
 }
 
 

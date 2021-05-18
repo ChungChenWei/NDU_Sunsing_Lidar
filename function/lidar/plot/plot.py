@@ -36,7 +36,7 @@ with open(pth(cur_file_path,'metadata.json'),'r') as f:
 
 
 ## plot all variable
-def plot_all(dt_dic,fig_path='.',tick_freq='6h'):
+def plot_all(dt_dic,fig_path='.',tick_freq='6h',input_tick=None):
 
 
 
@@ -126,23 +126,30 @@ def plot_all(dt_dic,fig_path='.',tick_freq='6h'):
 		# dt_ws, dt_wd = dt_dic['ws'].asfreq(dt_freq)[::setting['sep']], dt_dic['wd'].asfreq(dt_freq)[::setting['sep']]
 		dt_ws, dt_wd = dt_dic['ws'].asfreq(setting['dt_freq']), dt_dic['wd'].asfreq(setting['dt_freq'])
 		
-		dt_ws[dt_ws.keys()[-1]].replace(0.,n.nan,inplace=True)
-		dt_wd[dt_ws.keys()[-1]].replace(0.,n.nan,inplace=True)
-		dt_ws.replace(0.,.01,inplace=True)
+		# dt_ws[dt_ws.keys()[0]].replace(0.,n.nan,inplace=True)
+		# dt_wd[dt_ws.keys()[0]].replace(0.,n.nan,inplace=True)
 
-		_u, _v = wswd2uv(1.,dt_wd)
+		## (1) replace 0 as nan, process the by-product after interpolate
+		## (2) get the mask below 2.5
+		## (3) set the value as nan under mask
+		## (4) get the mask out value, apply scatter plot
+		dt_ws.replace(0.,n.nan,inplace=True)
+		_mask = dt_ws.copy()<2.5
+		dt_ws.mask(_mask,n.nan,inplace=True)
+		_index, _height =n.meshgrid(dt_ws.index,dt_ws.keys())
 
+		## change ws, wd to u, v
+		## get height as y axis and get x ticks
+		_u, _v = wswd2uv(1.5,dt_wd)
 		height = n.array(list(dt_ws.keys())).astype(float)
-		h_diff = n.diff(height)/2.
-		h_diff = n.append(h_diff,h_diff[-1])
-		height += h_diff
-
-		x_tick = dt_ws.asfreq(tick_freq).index
+		x_tick = input_tick if input_tick is not None else dt_ws.asfreq(tick_freq).index 
 
 		## plot
-		qv = ax.quiver(_u.index,height,_u.T,_v.T,dt_ws.T.values,
-					   cmap=cmap,scale=50.,clim=(setting['vmin'],setting['vmax']))
+		sc = ax.scatter(_index[_mask.T],_height[_mask.T],s=15,fc='None',ec='#666666',label='< 2.5 m/s')
 
+		qv = ax.quiver(_u.index,height[::setting['sep']],_u.T[::setting['sep']],_v.T[::setting['sep']],dt_ws.T[::setting['sep']].values,
+					   cmap=cmap,scale=50,clim=(setting['vmin'],setting['vmax']))
+	
 		cax = fig.add_axes([.92,box.y0,.015,box.height])
 
 		cb = fig.colorbar(qv,cax=cax)
@@ -150,7 +157,11 @@ def plot_all(dt_dic,fig_path='.',tick_freq='6h'):
 		cb.ax.tick_params(which='minor',length=2.5)
 		cb.ax.set_title(setting['cb_label'],fontsize=fs-2.)
 
+		ax.legend(handles=[sc],framealpha=0,fontsize=fs-1.,loc=10,bbox_to_anchor=(0.1,1.025),handlelength=1.)
+
 		return x_tick, dt_ws.index[0], dt_ws.index[-1]
+
+
 
 	## plot z_ws pcolormesh
 	def _plot_z_ws(fig,ax,fs,box,meta):
@@ -163,8 +174,6 @@ def plot_all(dt_dic,fig_path='.',tick_freq='6h'):
 		cmap_bot = cm.get_cmap('Greys',512)(n.linspace(.0,.3,512))
 		cmap = mc.ListedColormap(n.vstack((cmap_bot,cmap_top)))
 
-		# cmap = 'Greys'
-
 
 		## data
 		dt = dt_dic['z_ws']
@@ -172,7 +181,7 @@ def plot_all(dt_dic,fig_path='.',tick_freq='6h'):
 
 		## plot
 		## set z_ws as background and the colorbar is horizontal
-		pm = ax.pcolormesh(dt.index,dt.keys(),dt[:-1].T[:-1],cmap=cmap,vmin=setting['vmin'],vmax=setting['vmax'])
+		pm = ax.pcolormesh(dt.index,dt.keys(),dt[1:].T[1:],cmap=cmap,vmin=setting['vmin'],vmax=setting['vmax'])
 
 		box = ax.get_position()
 		cax = fig.add_axes([box.x0,.045,box.width,.015])
@@ -199,7 +208,7 @@ def plot_all(dt_dic,fig_path='.',tick_freq='6h'):
 		ax.set_position([box.x0,box.y0+0.05,box.width,box.height])
 
 		## z_ws
-		_plot_z_ws(fig,ax,fs,ax.get_position(),meta)
+		if 'z_ws' in dt_dic.keys(): _plot_z_ws(fig,ax,fs,ax.get_position(),meta)
 		## quiver
 		x_tick, _st, _fn = _plot_quiver(fig,ax,fs,ax.get_position(),meta)
 
@@ -222,6 +231,6 @@ def plot_all(dt_dic,fig_path='.',tick_freq='6h'):
 	# _plot_pcolor('ws','jet')
 	# _plot_pcolor('z_ws',cmap)
 
-	_plot('comp')
+	# _plot('comp')
 	_plot(dt_nam)
 

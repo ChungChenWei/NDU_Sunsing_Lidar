@@ -146,7 +146,7 @@ class reader:
 
 		## plot time series
 		## make picture dir
-		save_path = pth(fig_path,'GRIMM')
+		save_path = pth(fig_path,self.nam)
 		mkdir(save_path) if not exists(save_path) else None
 
 		## get data

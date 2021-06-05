@@ -66,7 +66,7 @@ class lidar_reader:
 		print('='*65)
 		print(f"{dtm.now().strftime('%m/%d %X')}")
 
-	def __raw_reader(self,_flist,_file):
+	def __raw_reader(self,_file):
 		## customize each instrument
 		## read one file
 		return None
